@@ -7,7 +7,7 @@ using ShoppingList.WebAPI.Middlewares;
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddPersistanceServices();
+builder.Services.PersistanceContextConfiguration();
 
 
 // Add services to the container.
@@ -41,3 +41,6 @@ app.UseHttpsRedirection();
 
 app.MapControllers();
 app.Run();
+
+
+// ! Git öğrenilip pushlanacak. - Repository Desing Pattern injected.
