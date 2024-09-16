@@ -1,6 +1,8 @@
+using ShoppingList.Domain.Entities.Common;
+
 namespace ShoppingList.Domain.Entities;
 
-public class Product
+public class Product : BaseEntity
 {
    public int CategoryId { get; set; }
    public string Name { get; set; }

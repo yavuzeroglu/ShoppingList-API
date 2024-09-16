@@ -30,7 +30,7 @@ public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
     public IQueryable<T> GetWhere(Expression<Func<T, bool>> expression, bool tracking = true)
     {
         var query = Table.Where(expression);
-        if(!tracking)
+        if (!tracking)
             query = query.AsNoTracking();
 
         return query;
@@ -39,15 +39,15 @@ public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
     public async Task<T> GetByIdAsync(int id, bool tracking = true)
     {
         var query = Table.AsQueryable();
-        if(!tracking) 
+        if (!tracking)
             query = query.AsNoTracking();
-        return await query.FirstOrDefaultAsync(data => data.Id.Equals(id));
+        return await query.FirstOrDefaultAsync(data => data.Id == id);
     }
 
     public async Task<T> GetSingleAsync(Expression<Func<T, bool>> expression, bool tracking = true)
     {
         var query = Table.AsQueryable();
-        if(!tracking)
+        if (!tracking)
             query = query.AsNoTracking();
         return await query.FirstOrDefaultAsync(expression);
     }
@@ -55,7 +55,7 @@ public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
     public async Task<T> GetByIdAsync(string id, bool tracking = true)
     {
         var query = Table.AsQueryable();
-        if(!tracking)
+        if (!tracking)
             query = query.AsNoTracking();
         return await query.FirstOrDefaultAsync(data => data.Id.Equals(Guid.Parse(id)));
     }
