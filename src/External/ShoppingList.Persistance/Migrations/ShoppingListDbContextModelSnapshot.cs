@@ -22,6 +22,45 @@ namespace ShoppingList.Persistance.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("ShoppingList.Domain.Entities.Brand", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Brands");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedDate = new DateTime(2024, 9, 17, 12, 28, 46, 427, DateTimeKind.Utc).AddTicks(8552),
+                            Name = "TEST"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedDate = new DateTime(2024, 9, 17, 12, 28, 46, 427, DateTimeKind.Utc).AddTicks(8555),
+                            Name = "Reyoncunuz"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedDate = new DateTime(2024, 9, 17, 12, 28, 46, 427, DateTimeKind.Utc).AddTicks(8556),
+                            Name = "ETİ"
+                        });
+                });
+
             modelBuilder.Entity("ShoppingList.Domain.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -82,6 +121,23 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 7,
                             Name = "Narenciye",
                             ParentCategoryId = 3
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "İçecek"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Gazlı İçecek",
+                            ParentCategoryId = 8
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Gazsız İçecek",
+                            ParentCategoryId = 8
                         });
                 });
 
@@ -92,6 +148,9 @@ namespace ShoppingList.Persistance.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BrandId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
@@ -107,6 +166,8 @@ namespace ShoppingList.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BrandId");
+
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
@@ -115,6 +176,7 @@ namespace ShoppingList.Persistance.Migrations
                         new
                         {
                             Id = 1,
+                            BrandId = 1,
                             CategoryId = 7,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsActive = false,
@@ -123,6 +185,7 @@ namespace ShoppingList.Persistance.Migrations
                         new
                         {
                             Id = 2,
+                            BrandId = 1,
                             CategoryId = 7,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsActive = false,
@@ -131,6 +194,7 @@ namespace ShoppingList.Persistance.Migrations
                         new
                         {
                             Id = 3,
+                            BrandId = 1,
                             CategoryId = 6,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsActive = false,
@@ -139,10 +203,20 @@ namespace ShoppingList.Persistance.Migrations
                         new
                         {
                             Id = 4,
+                            BrandId = 1,
                             CategoryId = 6,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsActive = false,
                             Name = "Karpuz"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            BrandId = 1,
+                            CategoryId = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false,
+                            Name = "Tarhana"
                         });
                 });
 
@@ -157,13 +231,25 @@ namespace ShoppingList.Persistance.Migrations
 
             modelBuilder.Entity("ShoppingList.Domain.Entities.Product", b =>
                 {
+                    b.HasOne("ShoppingList.Domain.Entities.Brand", "Brand")
+                        .WithMany("Products")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("ShoppingList.Domain.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("Brand");
+
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("ShoppingList.Domain.Entities.Brand", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("ShoppingList.Domain.Entities.Category", b =>

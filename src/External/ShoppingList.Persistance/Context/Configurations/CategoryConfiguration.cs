@@ -26,7 +26,10 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
             new Category() { Id = 4, Name = "Doğranmış, Ayıklanmış Meyveler", ParentCategoryId = 3 },
             new Category() { Id = 5, Name = "Egzotik Meyveler", ParentCategoryId = 3 },
             new Category() { Id = 6, Name = "Kavun ve Karpuz", ParentCategoryId = 3 },
-            new Category() { Id = 7, Name = "Narenciye", ParentCategoryId = 3 }
+            new Category() { Id = 7, Name = "Narenciye", ParentCategoryId = 3 },
+            new Category() { Id = 8, Name = "İçecek" },
+            new Category() { Id = 9, Name = "Gazlı İçecek", ParentCategoryId = 8 },
+            new Category() { Id = 10, Name = "Gazsız İçecek", ParentCategoryId = 8 }
         );
     }
 }

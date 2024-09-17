@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ShoppingList.Application.Repositories;
 using ShoppingList.Application.Repositories.Categories;
@@ -11,10 +12,10 @@ namespace ShoppingList.Persistance;
 
 public static class ServiceRegistration
 {
-   public static void PersistanceContextConfiguration(this IServiceCollection services)
+   public static void PersistanceContextConfiguration(this IServiceCollection services, IConfiguration configuration)
    {
       services.AddDbContext<ShoppingListDbContext>(opt => 
-         opt.UseNpgsql(ConfigurationHelper.GetConnectionString));
+         opt.UseNpgsql(configuration.GetConnectionString("PostgreSQL")));
    }
 
    public static void ConfigureRepositoryManager(this IServiceCollection services)
