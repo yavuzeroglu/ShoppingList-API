@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using ShoppingList.Application.DTOs.Products;
+using ShoppingList.Application.Mapping;
 using ShoppingList.Application.Repositories.Products;
 using ShoppingList.Domain.Entities;
 using ShoppingList.Persistance.Context;
@@ -10,17 +14,19 @@ namespace ShoppingList.WebAPI.Controllers
     {
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IProductReadRepository _productReadRepository;
+        private readonly IMapper _mapper;
 
-        public ProductController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository)
+        public ProductController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IMapper mapper)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            var products = _productReadRepository.GetAll();
+            var products = _productReadRepository.GetAll().OrderBy(c => c.Id);
             if (products is null)
                 return NotFound();
 
@@ -30,62 +36,59 @@ namespace ShoppingList.WebAPI.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var product = await _productReadRepository.GetByIdAsync(id, false);
-            if (product is null)
+            var tempData = await _productReadRepository
+                .Table
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(p => p.Id.Equals(id));
+
+            //Getwhere ile deneyelimm...
+
+            var product = _productReadRepository
+                .GetWhere(x => x.Id.Equals(id))
+                .Include(p => p.Brand)
+                .Include(p => p.Category);
+
+            if (tempData is null)
                 return NotFound();
 
+            var productDto = _mapper.Map<ListProductDTO>(tempData);
 
-            return Ok(product);
+            return Ok(productDto);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOneProduct([FromBody] Product product)
+        public async Task<IActionResult> CreateOneProduct([FromBody] CreateProductDTO productDTO)
         {
-            if (product is null)
+            if (productDTO is null)
                 return BadRequest();
 
-            Product entity = new()
-            {
-                Name = product.Name,
-                CategoryId = product.CategoryId,
-                CreatedDate = DateTime.UtcNow,
-                IsActive = true
-            };
-            await _productWriteRepository.AddAsync(entity);
+            var convertEnt = _mapper.Map<Product>(productDTO);
+            await _productWriteRepository.AddAsync(convertEnt);
             await _productWriteRepository.SaveAsync();
-            return Ok(product);
+            return Ok(productDTO);
         }
 
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateOneProductAsync([FromRoute(Name = "id")] int id, [FromBody] Product product)
+        [HttpPut]
+        public async Task<IActionResult> UpdateOneProductAsync( [FromBody] UpdateProductDTO productDTO)
         {
-            // check product
-            var entity = await _productReadRepository.GetByIdAsync(id, false);
-            
-            
-            if(entity is null)
-                return NotFound(); // 404
+            Product product = await _productReadRepository.GetByIdAsync(productDTO.Id, false);
+            if (product is null)
+                throw new InvalidOperationException("Product not found!");
 
-
-            // check id
-            if (id != product.Id)
-                return BadRequest(); // 400
-
-            entity.Name = product.Name;
-            entity.CategoryId = product.CategoryId;
-            entity.IsActive = product.IsActive;
+            var updateProduct = _mapper.Map<Product>(productDTO);
+            updateProduct.CreatedDate = product.CreatedDate;
             
-            _productWriteRepository.Update(entity);
+            _productWriteRepository.Update(updateProduct);
             await _productWriteRepository.SaveAsync();
-
-            return Ok(entity);
+            return Ok(updateProduct);
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteOneProduct([FromRoute(Name = "id")] int id)
         {
             var entity = await _productReadRepository.GetByIdAsync(id, true);
-            if(entity is null)
+            if (entity is null)
                 return NotFound();
 
             await _productWriteRepository.RemoveAsync(id);

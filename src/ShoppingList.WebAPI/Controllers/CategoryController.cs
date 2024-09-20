@@ -1,4 +1,8 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ShoppingList.Application.DTOs.Categories;
+using ShoppingList.Application.Mapping;
 using ShoppingList.Application.Repositories.Categories;
 using ShoppingList.Domain.Entities;
 
@@ -8,32 +12,64 @@ public class CategoryController : BaseApiController
 {
    private readonly ICategoryReadRepository _categoryReadRepository;
    private readonly ICategoryWriteRepository _categoryWriteRepository;
+   private readonly IMapper _mapper;
 
-   public CategoryController(ICategoryReadRepository categoryReadRepository, ICategoryWriteRepository categoryWriteRepository)
+   public CategoryController(ICategoryReadRepository categoryReadRepository, ICategoryWriteRepository categoryWriteRepository, IMapper mapper)
    {
       _categoryReadRepository = categoryReadRepository;
       _categoryWriteRepository = categoryWriteRepository;
+      _mapper = mapper;
    }
 
 
    [HttpGet]
-   public IActionResult GetAll()
+   public async Task<IActionResult> GetAll()
    {
-      var categories = _categoryReadRepository.GetAll();
+      var categories = await _categoryReadRepository
+         .GetAll()
+         .Include(c => c.Products)
+         .Include(c => c.SubCategories)
+         .Include(c => c.ParentCategory)
+         .ToListAsync();
+         
       if (categories is null)
          return NotFound();
 
-      return Ok(categories);
+      var result = _mapper.Map<List<ListCategoryDTO>>(categories);
+
+      return Ok(result);
    }
 
-   [HttpGet("{id:int}")]
-   public async Task<IActionResult> GetById([FromRoute(Name = "id")] int id)
+   [HttpGet("GetDetails")]
+   public IActionResult GetDetails()
    {
-      var category = await _categoryReadRepository.GetByIdAsync(id, false);
-      if (category is null)
-         return NotFound();
+      var categories = _categoryReadRepository
+         .GetAll()
+         .Include(c => c.SubCategories)
+         .Include(c => c.Products)
+         .Include(c => c.ParentCategory);
 
-      return Ok(category);
+      var result = _mapper.Map<List<ListCategoryDTO>>(categories);
+
+      return Ok(result);
+
+   }
+
+
+   [HttpGet("{detailId:int}")]
+   public async Task<IActionResult> GetOneDetail([FromRoute] int detailId)
+   {
+     var category = await _categoryReadRepository
+         .GetWhere(c => c.Id.Equals(detailId))
+         .Include(c => c.Products)
+         .Include(c => c.SubCategories)
+         .Include(c => c.ParentCategory)
+         .FirstOrDefaultAsync();
+
+
+      var vm = _mapper.Map<ListCategoryDTO>(category);
+
+      return Ok(vm);
    }
 
    [HttpPost]
@@ -54,29 +90,29 @@ public class CategoryController : BaseApiController
 
       if (entity is null)
          return NotFound();
-         // throw new Exception($"Not Found Category => {id} ");
+      // throw new Exception($"Not Found Category => {id} ");
 
       if (category is null)
          return BadRequest();
 
       entity.Name = category.Name;
       entity.ParentCategoryId = category.ParentCategoryId ?? entity.ParentCategoryId;
-      
+
       _categoryWriteRepository.Update(entity);
       await _categoryWriteRepository.SaveAsync();
 
       return Ok();
    }
 
-    [HttpDelete("{id:int}")]
-    public async Task<ActionResult> Remove([FromRoute(Name = "id")] int id)
-    {
-        var category = await _categoryReadRepository.GetByIdAsync(id, false);
-        if (category is null)
-            return NotFound();
+   [HttpDelete("{id:int}")]
+   public async Task<ActionResult> Remove([FromRoute(Name = "id")] int id)
+   {
+      var category = await _categoryReadRepository.GetByIdAsync(id, false);
+      if (category is null)
+         return NotFound();
 
-        await _categoryWriteRepository.RemoveAsync(id);
-        await _categoryWriteRepository.SaveAsync();
-        return NoContent();
-    }
+      await _categoryWriteRepository.RemoveAsync(id);
+      await _categoryWriteRepository.SaveAsync();
+      return NoContent();
+   }
 }

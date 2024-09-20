@@ -1,5 +1,8 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using ShoppingList.Application;
 using ShoppingList.Persistance;
 using ShoppingList.Persistance.Context;
 using ShoppingList.WebAPI.Middlewares;
@@ -9,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.PersistanceContextConfiguration(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
+builder.Services.ConfigureApplicationRegistration();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
