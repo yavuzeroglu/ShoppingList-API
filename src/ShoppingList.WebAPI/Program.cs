@@ -1,11 +1,9 @@
-using System.Reflection;
 using System.Text.Json.Serialization;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ShoppingList.Application;
+using ShoppingList.Application.Exceptions;
 using ShoppingList.Persistance;
 using ShoppingList.Persistance.Context;
-using ShoppingList.WebAPI.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +37,8 @@ if (app.Environment.IsDevelopment())
   app.UseSwaggerUI();
 }
 
-app.ConfigureExceptionHandle<Program>(app.Services.GetRequiredService<ILogger<Program>>());
+app.ConfigureExceptionHandlingMiddleware();
+// app.ConfigureExceptionHandle<Program>(app.Services.GetRequiredService<ILogger<Program>>());
 
 app.UseHttpsRedirection();
 
