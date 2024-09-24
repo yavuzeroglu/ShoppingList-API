@@ -38,7 +38,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.ConfigureExceptionHandlingMiddleware();
-// app.ConfigureExceptionHandle<Program>(app.Services.GetRequiredService<ILogger<Program>>());
 
 app.UseHttpsRedirection();
 

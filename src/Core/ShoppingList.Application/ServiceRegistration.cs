@@ -9,7 +9,12 @@ public static class ServiceRegistration
 {
    public static void ConfigureApplicationRegistration(this IServiceCollection services)
    {
-      services.AddAutoMapper(Assembly.GetExecutingAssembly());
+      var assembly = Assembly.GetExecutingAssembly();
+
+      services.AddAutoMapper(assembly);
+
       services.AddTransient<ExceptionMiddleware>();
+
+      services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(assembly));
    }
 }

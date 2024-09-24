@@ -24,7 +24,7 @@ public class BrandController : BaseApiController
    [HttpGet]
    public IActionResult GetAll()
    {
-      var brands = _brandReadRepository.GetAll();
+      var brands = _brandReadRepository.GetAll().OrderBy(b => b.Id);
       return Ok(brands);
    }
 

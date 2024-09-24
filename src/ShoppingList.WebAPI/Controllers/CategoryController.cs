@@ -27,17 +27,14 @@ public class CategoryController : BaseApiController
    {
       var categories = await _categoryReadRepository
          .GetAll()
-         .Include(c => c.Products)
-         .Include(c => c.SubCategories)
-         .Include(c => c.ParentCategory)
          .ToListAsync();
          
       if (categories is null)
          return NotFound();
 
-      var result = _mapper.Map<List<ListCategoryDTO>>(categories);
+      // var result = _mapper.Map<List<ListCategoryDTO>>(categories);
 
-      return Ok(result);
+      return Ok(categories);
    }
 
    [HttpGet("GetDetails")]
