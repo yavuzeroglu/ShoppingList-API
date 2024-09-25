@@ -7,12 +7,14 @@ using ShoppingList.Application.Features.Categories.Commands.CreateCategory;
 using ShoppingList.Application.Features.Categories.Commands.DeleteCategory;
 using ShoppingList.Application.Features.Categories.Commands.UpdateCategory;
 using ShoppingList.Application.Features.Categories.Queries.GetAllCategory;
+using ShoppingList.Application.Features.Categories.Queries.GetByIdCategory;
 using ShoppingList.Application.Mapping;
 using ShoppingList.Application.Repositories.Categories;
 using ShoppingList.Domain.Entities;
 
 namespace ShoppingList.WebAPI.Controllers;
 
+[Route("api/Categories")]
 public class CategoryController : BaseApiController
 {
    private readonly ICategoryReadRepository _categoryReadRepository;
@@ -32,17 +34,6 @@ public class CategoryController : BaseApiController
    [HttpGet]
    public async Task<IActionResult> GetAll()
    {
-      // var categories = await _categoryReadRepository
-      //    .GetAll()
-      //    .ToListAsync();
-
-      // if (categories is null)
-      //    return NotFound();
-
-      // // var result = _mapper.Map<List<ListCategoryDTO>>(categories);
-
-      // return Ok(categories);
-
       var response = await _mediator.Send(new GetAllCategoryQueryRequest());
       return Ok(response);
    }
@@ -62,6 +53,13 @@ public class CategoryController : BaseApiController
 
    }
 
+
+   [HttpGet("{Id}")]
+   public async Task<IActionResult> GetOneCategory([FromRoute] GetByIdCategoryQueryRequest request)
+   {
+      GetByIdCategoryQueryResponse response = await _mediator.Send(request);
+      return Ok(response);
+   }
 
    [HttpGet("{detailId:int}")]
    public async Task<IActionResult> GetOneDetail([FromRoute] int detailId)
@@ -83,34 +81,7 @@ public class CategoryController : BaseApiController
    public async Task<IActionResult> Create(CreateCategoryCommandRequest request)
    {
       await _mediator.Send(request);
-      return StatusCode((int)StatusCodes.Status201Created);
-      // if (category is null)
-      //    return BadRequest();
-
-      // await _categoryWriteRepository.AddAsync(category);
-      // await _categoryWriteRepository.SaveAsync();
-      // return Ok(category);
-   }
-
-   [HttpPut("{id:int}")]
-   public async Task<IActionResult> Update([FromRoute(Name = "id")] int id, [FromBody] Category category)
-   {
-      var entity = await _categoryReadRepository.GetByIdAsync(id, false);
-
-      if (entity is null)
-         return NotFound();
-      // throw new Exception($"Not Found Category => {id} ");
-
-      if (category is null)
-         return BadRequest();
-
-      entity.Name = category.Name;
-      entity.ParentCategoryId = category.ParentCategoryId ?? entity.ParentCategoryId;
-
-      _categoryWriteRepository.Update(entity);
-      await _categoryWriteRepository.SaveAsync();
-
-      return Ok();
+      return StatusCode(StatusCodes.Status201Created);
    }
 
    [HttpPut]
@@ -121,17 +92,9 @@ public class CategoryController : BaseApiController
    }
 
    [HttpDelete]
-   public async Task<ActionResult> Remove([FromBody] DeleteCategoryCommandRequest request)
+   public async Task<ActionResult> Remove (DeleteCategoryCommandRequest request)
    {
       await _mediator.Send(request);
       return NoContent();
-
-      // var category = await _categoryReadRepository.GetByIdAsync(id, false);
-      // if (category is null)
-      //    return NotFound();
-
-      // await _categoryWriteRepository.RemoveAsync(id);
-      // await _categoryWriteRepository.SaveAsync();
-      // return NoContent();
    }
 }
