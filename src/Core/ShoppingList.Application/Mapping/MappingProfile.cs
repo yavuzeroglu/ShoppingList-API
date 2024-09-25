@@ -1,6 +1,7 @@
 using AutoMapper;
 using ShoppingList.Application.DTOs.Categories;
 using ShoppingList.Application.DTOs.Products;
+using ShoppingList.Application.Features.Categories.Commands.CreateCategory;
 using ShoppingList.Application.Features.Products.Commands.UpdateProduct;
 using ShoppingList.Domain.Entities;
 
@@ -28,6 +29,9 @@ public class MappingProfile : Profile
                     opt => opt.MapFrom(src => src.SubCategories.Select(sc => sc.Name)))
          .ForMember(dest => dest.Products,
                   opt => opt.MapFrom(src => src.Products.Select(p => p.Name))).ReverseMap();
+
+
+      CreateMap<CreateCategoryCommandRequest, Category>();
    }
 }
 

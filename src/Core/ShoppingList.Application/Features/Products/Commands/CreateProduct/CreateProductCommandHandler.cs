@@ -1,19 +1,23 @@
+using FluentValidation;
 using MediatR;
+using ShoppingList.Application.Exceptions;
 using ShoppingList.Application.Repositories.Products;
 using ShoppingList.Domain.Entities;
 
 namespace ShoppingList.Application.Features.Products.Commands.CreateProduct;
 
-public class CreateProductCommandHandler : IRequestHandler<CreateProductCommandRequest>
+public class CreateProductCommandHandler : IRequestHandler<CreateProductCommandRequest, Unit>
 {
    private readonly IProductWriteRepository _productWriteRepository;
+   private readonly CreateProductCommandValidator _validator;
 
-   public CreateProductCommandHandler(IProductWriteRepository productWriteRepository)
+   public CreateProductCommandHandler(IProductWriteRepository productWriteRepository, CreateProductCommandValidator validator)
    {
       _productWriteRepository = productWriteRepository;
+      _validator = validator;
    }
 
-   public async Task Handle(CreateProductCommandRequest request, CancellationToken cancellationToken)
+   public async Task<Unit> Handle(CreateProductCommandRequest request, CancellationToken cancellationToken)
    {
       Product product = new()
       {
@@ -26,5 +30,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommandR
 
       await _productWriteRepository.AddAsync(product);
       await _productWriteRepository.SaveAsync();
+
+      return Unit.Value;
    }
 }

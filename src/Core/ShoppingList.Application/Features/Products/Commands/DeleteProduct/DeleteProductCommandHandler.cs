@@ -4,7 +4,7 @@ using ShoppingList.Application.Repositories.Products;
 
 namespace ShoppingList.Application.Features.Products.Commands.DeleteProduct;
 
-public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommandRequest>
+public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommandRequest, Unit>
 {
 
    private readonly IProductReadRepository _productReadRepository;
@@ -16,7 +16,7 @@ public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommandR
       _productWriteRepository = productWriteRepository;
    }
 
-   public async Task Handle(DeleteProductCommandRequest request, CancellationToken cancellationToken)
+   public async Task<Unit> Handle(DeleteProductCommandRequest request, CancellationToken cancellationToken)
    {
       var product = await _productReadRepository.GetSingleAsync(p => p.Id == request.Id && p.IsActive, false);
       if (product is null)
@@ -25,5 +25,7 @@ public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommandR
       product.IsActive = false;
       _productWriteRepository.Update(product);
       await _productWriteRepository.SaveAsync();
+
+      return Unit.Value;
    }
 }

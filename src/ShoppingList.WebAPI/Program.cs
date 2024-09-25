@@ -4,6 +4,8 @@ using ShoppingList.Application;
 using ShoppingList.Application.Exceptions;
 using ShoppingList.Persistance;
 using ShoppingList.Persistance.Context;
+using FluentValidation;
+using ShoppingList.Application.Features.Products.Commands.CreateProduct;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,18 +16,18 @@ builder.Services.ConfigureApplicationRegistration();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddControllers().AddJsonOptions(opt =>
+
+
+// builder.Services.AddValidatorsFromAssemblyContaining<CreateProductCommandValidator>();
+builder.Services.AddControllers()
+    .AddJsonOptions(opt =>
 {
-  opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ShoppingListDbContext>(opt =>
-{
-  opt.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL"));
-});
 
 
 var app = builder.Build();
@@ -33,8 +35,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-  app.UseSwagger();
-  app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.ConfigureExceptionHandlingMiddleware();

@@ -1,17 +1,15 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
 using ShoppingList.Application.DTOs.Products;
 using ShoppingList.Application.Features.Products.Commands.CreateProduct;
 using ShoppingList.Application.Features.Products.Commands.DeleteProduct;
 using ShoppingList.Application.Features.Products.Commands.UpdateProduct;
 using ShoppingList.Application.Features.Products.Queries.GetAllProducts;
-using ShoppingList.Application.Mapping;
+using ShoppingList.Application.Features.Products.Queries.GetByIdProduct;
 using ShoppingList.Application.Repositories.Products;
 using ShoppingList.Domain.Entities;
-using ShoppingList.Persistance.Context;
 
 namespace ShoppingList.WebAPI.Controllers
 {
@@ -28,46 +26,40 @@ namespace ShoppingList.WebAPI.Controllers
             _productReadRepository = productReadRepository;
             _mapper = mapper;
             _mediator = mediator;
-
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-
             var response = await _mediator.Send(new GetAllProductQueryRequest());
             return Ok(response);
-
-
-            // var products = _productReadRepository.GetAll().OrderBy(c => c.Id);
-            // if (products is null)
-            //     return NotFound();
-
-            // return Ok(products);
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById([FromRoute] int id)
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetById([FromRoute] GetByIdProductQueryRequest request)
         {
-            var tempData = await _productReadRepository
-                .Table
-                .Include(p => p.Brand)
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(p => p.Id.Equals(id));
+            // var tempData = await _productReadRepository
+            //     .Table
+            //     .Include(p => p.Brand)
+            //     .Include(p => p.Category)
+            //     .FirstOrDefaultAsync(p => p.Id.Equals(id));
 
-            //Getwhere ile deneyelimm...
+            // //Getwhere ile deneyelimm...
 
-            var product = _productReadRepository
-                .GetWhere(x => x.Id.Equals(id))
-                .Include(p => p.Brand)
-                .Include(p => p.Category);
+            // var product = _productReadRepository
+            //     .GetWhere(x => x.Id.Equals(id))
+            //     .Include(p => p.Brand)
+            //     .Include(p => p.Category);
 
-            if (tempData is null)
-                return NotFound();
+            // if (tempData is null)
+            //     return NotFound();
 
-            var productDto = _mapper.Map<ListProductDTO>(tempData);
+            // var productDto = _mapper.Map<ListProductDTO>(tempData);
 
-            return Ok(productDto);
+            // return Ok(productDto);
+
+            var response = await _mediator.Send(request);
+            return Ok(response);
         }
 
         [HttpPost("CreateProduct")]
@@ -93,20 +85,8 @@ namespace ShoppingList.WebAPI.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateOneProductAsync([FromBody] UpdateProductCommandRequest request)
         {
-
             await _mediator.Send(request);
             return Ok();
-
-            // Product product = await _productReadRepository.GetByIdAsync(productDTO.Id, false);
-            // if (product is null)
-            //     throw new InvalidOperationException("Product not found!");
-
-            // var updateProduct = _mapper.Map<Product>(productDTO);
-            // updateProduct.CreatedDate = product.CreatedDate;
-
-            // _productWriteRepository.Update(updateProduct);
-            // await _productWriteRepository.SaveAsync();
-            // return Ok(updateProduct);
         }
 
 
@@ -116,14 +96,6 @@ namespace ShoppingList.WebAPI.Controllers
         {
             await _mediator.Send(request);
             return NoContent();
-
-            // var entity = await _productReadRepository.GetByIdAsync(id, true);
-            // if (entity is null)
-            //     return NotFound();
-
-            // await _productWriteRepository.RemoveAsync(id);
-            // await _productWriteRepository.SaveAsync();
-            // return NoContent();
         }
     }
 }

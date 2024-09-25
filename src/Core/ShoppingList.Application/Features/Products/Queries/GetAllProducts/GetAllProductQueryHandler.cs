@@ -26,8 +26,8 @@ public class GetAllProductQueryHandler : IRequestHandler<GetAllProductQueryReque
          {
             Id = product.Id,
             Name = product.Name,
-            BrandName = product.Brand.Name,
-            CategoryName = product.Category.Name,
+            BrandId = product.BrandId,
+            CategoryId = product.CategoryId,
             IsActive = product.IsActive,
             CreatedDate = product.CreatedDate.ToString("dd-mm-yyyy")
          });

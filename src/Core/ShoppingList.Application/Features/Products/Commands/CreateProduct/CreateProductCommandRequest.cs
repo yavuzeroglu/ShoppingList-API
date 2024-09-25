@@ -2,7 +2,7 @@ using MediatR;
 
 namespace ShoppingList.Application.Features.Products.Commands.CreateProduct;
 
-public class CreateProductCommandRequest : IRequest
+public class CreateProductCommandRequest : IRequest<Unit>
 {
    public int CategoryId { get; init; }
    public int BrandId { get; init; }

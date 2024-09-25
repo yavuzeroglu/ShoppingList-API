@@ -1,6 +1,7 @@
-namespace ShoppingList.Application.Features.Products.Queries.GetAllProducts;
+namespace ShoppingList.Application.Features.Products.Queries.GetByIdProduct;
 
-public class GetAllProductQueryResponse
+
+public class GetByIdProductQueryResponse
 {
    public int Id { get; set; }
    public string Name { get; set; } = string.Empty;

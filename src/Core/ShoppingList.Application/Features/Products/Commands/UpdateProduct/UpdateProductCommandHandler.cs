@@ -6,7 +6,7 @@ using ShoppingList.Domain.Entities;
 
 namespace ShoppingList.Application.Features.Products.Commands.UpdateProduct;
 
-public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommandRequest>
+public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommandRequest, Unit>
 {
    private readonly IProductReadRepository _productReadRepository;
    private readonly IProductWriteRepository _productWriteRepository;
@@ -19,7 +19,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommandR
       _mapper = mapper;
    }
 
-   public async Task Handle(UpdateProductCommandRequest request, CancellationToken cancellationToken)
+   public async Task<Unit> Handle(UpdateProductCommandRequest request, CancellationToken cancellationToken)
    {
       var product = await _productReadRepository.GetSingleAsync(p => p.Id == request.Id && p.IsActive, false);
       if (product is null)
@@ -29,5 +29,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommandR
 
       _productWriteRepository.Update(mappedEntity);
       await _productWriteRepository.SaveAsync();
+
+      return Unit.Value;
    }
 }
