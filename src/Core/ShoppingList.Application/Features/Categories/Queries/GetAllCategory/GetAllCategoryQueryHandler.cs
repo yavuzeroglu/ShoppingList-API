@@ -28,12 +28,10 @@ public class GetAllCategoryQueryHandler : IRequestHandler<GetAllCategoryQueryReq
             Id = category.Id,
             Name = category.Name,
             ParentCategoryId = category.ParentCategoryId ?? null,
-            SubCategories = category.SubCategories.Select(c => c.Name).ToList()
+            SubCategories = category.SubCategories?.Select(sc => sc.Name).ToList()
          });
 
       return response;
-
-      // ! GetById de kaldım
 
    }
 }
