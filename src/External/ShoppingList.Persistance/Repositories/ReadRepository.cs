@@ -1,6 +1,7 @@
 using System.Data.Common;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using ShoppingList.Application.Repositories;
 using ShoppingList.Domain.Entities.Common;
 using ShoppingList.Persistance.Context;
@@ -18,9 +19,12 @@ public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
 
     public DbSet<T> Table => _context.Set<T>();
 
-    public IQueryable<T> GetAll(bool tracking = false)
+    public IQueryable<T> GetAll(Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null, bool tracking = false)
     {
         var query = Table.AsQueryable();
+        if (include != null)
+            query = include(query);
+
         if (!tracking)
             query = query.AsNoTracking();
 
@@ -44,11 +48,15 @@ public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
         return await query.FirstOrDefaultAsync(data => data.Id == id);
     }
 
-    public async Task<T> GetSingleAsync(Expression<Func<T, bool>> expression, bool tracking = true)
+    public async Task<T> GetSingleAsync(Expression<Func<T, bool>> expression, Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null, bool tracking = true)
     {
         var query = Table.AsQueryable();
+        if (include is not null)
+            query = include(query);
+            
         if (!tracking)
             query = query.AsNoTracking();
+
         return await query.FirstOrDefaultAsync(expression);
     }
 
