@@ -18,7 +18,7 @@ public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommandR
 
    public async Task<Unit> Handle(DeleteProductCommandRequest request, CancellationToken cancellationToken)
    {
-      var product = await _productReadRepository.GetSingleAsync(p => p.Id == request.Id && p.IsActive, false);
+      var product = await _productReadRepository.GetSingleAsync(p => p.Id == request.Id && p.IsActive, tracking: false);
       if (product is null)
          throw new NotFoundException("Product Not Found");
 

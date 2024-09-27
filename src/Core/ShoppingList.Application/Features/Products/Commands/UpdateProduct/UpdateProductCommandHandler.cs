@@ -21,7 +21,8 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommandR
 
    public async Task<Unit> Handle(UpdateProductCommandRequest request, CancellationToken cancellationToken)
    {
-      var product = await _productReadRepository.GetSingleAsync(p => p.Id == request.Id && p.IsActive, false);
+      var product = await _productReadRepository
+         .GetSingleAsync(p => p.Id == request.Id && p.IsActive, tracking: false);
       if (product is null)
          throw new NotFoundException("Product Not Found");
 

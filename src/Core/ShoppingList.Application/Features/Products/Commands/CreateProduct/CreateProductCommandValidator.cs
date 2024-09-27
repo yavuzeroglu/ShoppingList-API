@@ -9,9 +9,13 @@ public class CreateProductCommandValidator : AbstractValidator<CreateProductComm
    {
       RuleFor(p => p.Name)
          .NotEmpty().NotNull()
-            .WithMessage("Lütfen ürün adını boş bırakmayınız")
+            .WithName("Ürün Adı")
+            .WithMessage("Lütfen ürün adını boş bırakmayınız");
+
+      RuleFor(p => p.Name)
          .MinimumLength(2).MaximumLength(150)
-            .WithMessage("Ürün adı 2 ile 150 olmalı.");
+         .WithName("Ürün Adı")
+            .WithMessage("Ürün 2 ile 150 olmalı.");
 
 
       RuleFor(p => p.BrandId)
