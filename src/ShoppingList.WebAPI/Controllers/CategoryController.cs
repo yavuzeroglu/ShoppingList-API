@@ -8,9 +8,8 @@ using ShoppingList.Application.Features.Categories.Commands.DeleteCategory;
 using ShoppingList.Application.Features.Categories.Commands.UpdateCategory;
 using ShoppingList.Application.Features.Categories.Queries.GetAllCategory;
 using ShoppingList.Application.Features.Categories.Queries.GetByIdCategory;
-using ShoppingList.Application.Mapping;
 using ShoppingList.Application.Repositories.Categories;
-using ShoppingList.Domain.Entities;
+
 
 namespace ShoppingList.WebAPI.Controllers;
 
@@ -59,22 +58,6 @@ public class CategoryController : BaseApiController
    {
       GetByIdCategoryQueryResponse response = await _mediator.Send(request);
       return Ok(response);
-   }
-
-   [HttpGet("{detailId:int}")]
-   public async Task<IActionResult> GetOneDetail([FromRoute] int detailId)
-   {
-      var category = await _categoryReadRepository
-          .GetWhere(c => c.Id.Equals(detailId))
-          .Include(c => c.Products)
-          .Include(c => c.SubCategories)
-          .Include(c => c.ParentCategory)
-          .FirstOrDefaultAsync();
-
-
-      var vm = _mapper.Map<ListCategoryDTO>(category);
-
-      return Ok(vm);
    }
 
    [HttpPost]
