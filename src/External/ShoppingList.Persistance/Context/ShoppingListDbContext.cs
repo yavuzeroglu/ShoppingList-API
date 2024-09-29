@@ -1,12 +1,13 @@
 using System.Reflection;
-using System.Reflection.Metadata;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ShoppingList.Domain.Entities;
+using ShoppingList.Domain.Entities.Identity;
 
 namespace ShoppingList.Persistance.Context;
 
 
-public class ShoppingListDbContext : DbContext
+public class ShoppingListDbContext : IdentityDbContext<AppUser, AppRole, string>
 {
     public ShoppingListDbContext(DbContextOptions options) : base(options)
     { }
@@ -17,6 +18,7 @@ public class ShoppingListDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 

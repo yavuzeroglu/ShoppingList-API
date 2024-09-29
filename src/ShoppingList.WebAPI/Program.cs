@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using ShoppingList.Application;
 using ShoppingList.Application.Exceptions;
+using ShoppingList.Infrastructure;
 using ShoppingList.Persistance;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.PersistanceContextConfiguration(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureApplicationRegistration();
-
+builder.Services.AddInfrastructureServices();
+builder.Services.ConfigureIdentity(builder.Configuration);
 
 
 builder.Services.AddControllers()
