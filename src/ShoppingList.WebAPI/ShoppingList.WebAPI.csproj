@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\External\ShoppingList.Persistance\ShoppingList.Persistance.csproj" />
     <ProjectReference Include="..\Core\ShoppingList.Application\ShoppingList.Application.csproj" />
+    <ProjectReference Include="..\External\ShoppingList.Infrastructure\ShoppingList.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
