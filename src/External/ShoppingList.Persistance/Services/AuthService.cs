@@ -10,11 +10,13 @@ public class AuthService : IAuthService
 {
    private readonly UserManager<AppUser> _userManager;
    private readonly ITokenService _tokenService;
+   private readonly IUserService _userService;
 
-   public AuthService(UserManager<AppUser> userManager, ITokenService tokenService)
+   public AuthService(UserManager<AppUser> userManager, ITokenService tokenService, IUserService userService)
    {
       _userManager = userManager;
       _tokenService = tokenService;
+      _userService = userService;
    }
 
    public async Task<TokenDTO> LoginAsync(string usernameOrEmail, string password, int accessTokenLifetime)
@@ -31,13 +33,26 @@ public class AuthService : IAuthService
       if (checkPassword)
       {
          TokenDTO token = _tokenService.CreateAccessToken(accessTokenLifetime);
+         await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 1);
          return new()
          {
             AccessToken = token.AccessToken,
-            Expiration = token.Expiration
+            Expiration = token.Expiration,
+            RefreshToken = token.RefreshToken
          };
       }
-
       throw new Exception("Kullanici adi veya sifre hatali");
+   }
+
+   public async Task<TokenDTO> RefreshTokenLogin(string refreshToken)
+   {
+      AppUser? user = _userManager.Users.FirstOrDefault(u => u.RefreshToken == refreshToken);
+      if (user is not null && user?.RefreshTokenEndDate > DateTime.UtcNow)
+      {
+         TokenDTO token = _tokenService.CreateAccessToken(2);
+         await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 1);
+         return token;
+      } else 
+         throw new Exception("Kullanici Bulunamadi");
    }
 }

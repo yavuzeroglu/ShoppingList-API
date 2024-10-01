@@ -36,4 +36,18 @@ public class UserService : IUserService
 
       return response;
    }
+
+   public async Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime accessTokenDate, int addOnAccessToken)
+   {
+      if (user is not null)
+      {
+         user.RefreshToken = refreshToken;
+         user.RefreshTokenEndDate = accessTokenDate.AddMinutes(addOnAccessToken);
+         await _userManager.UpdateAsync(user);
+      }
+      else 
+         throw new Exception("Kullanici bulunamadi");
+
+
+   }
 }

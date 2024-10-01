@@ -24,7 +24,8 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommandRequest, 
         return new LoginUserCommandResponse()
         {
             Token = token.AccessToken,
-            Expiration = token.Expiration
+            Expiration = token.Expiration,
+            RefreshToken = token.RefreshToken
         };
     }
 }

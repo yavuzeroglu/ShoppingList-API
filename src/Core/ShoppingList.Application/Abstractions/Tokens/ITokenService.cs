@@ -5,4 +5,5 @@ namespace ShoppingList.Application.Abstractions.Tokens;
 public interface ITokenService
 {
     TokenDTO CreateAccessToken(int minutes);
+    string CreateRefreshToken();
 }
