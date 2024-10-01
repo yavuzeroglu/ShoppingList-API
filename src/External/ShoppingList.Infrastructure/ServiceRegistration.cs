@@ -30,9 +30,11 @@ public static class ServiceRegistration
                     ValidAudience = configuration["JWT:Audience"],
                     ValidIssuer = configuration["JWT:Issuer"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"])),
+                    LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
+                        expires != null ? expires > DateTime.UtcNow : false
                 };
             });
     }
 
-    
+
 }

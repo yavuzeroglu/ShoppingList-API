@@ -1,39 +1,35 @@
 using System.Reflection.Metadata;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using ShoppingList.Application.Abstractions.Services;
+using ShoppingList.Application.DTOs.Users;
 using ShoppingList.Domain.Entities.Identity;
 
 namespace ShoppingList.Application.Features.AppUsers.Commands.CreateUser;
 
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommandRequest, CreateUserCommandResponse>
 {
-   private readonly UserManager<AppUser> _userManager;
+   private readonly IUserService _userService;
 
-   public CreateUserCommandHandler(UserManager<AppUser> userManager)
+   public CreateUserCommandHandler(IUserService userService)
    {
-      _userManager = userManager;
+      _userService = userService;
    }
 
    public async Task<CreateUserCommandResponse> Handle(CreateUserCommandRequest request, CancellationToken cancellationToken)
    {
-      IdentityResult result = await _userManager.CreateAsync(new()
+      CreateUserResponseDTO response = await _userService.CreateAsync(new()
       {
-         Id = Guid.NewGuid().ToString(),
          UserName = request.UserName,
-         Email = request.Email
-      }, request.Password);
-      CreateUserCommandResponse response = new() { Succeeded = result.Succeeded };
+         Email = request.Email,
+         Password = request.Password,
+         PasswordConfirm = request.PasswordConfirm
+      });
 
-      if (result.Succeeded)
-         response.Message = "Kullanici basariyla olusturulmustur.";
-      else
+      return new()
       {
-         foreach (var error in result.Errors)
-         {
-            response.Message += $"{error.Code} --- {error.Description} \n";
-         }
-      }
-
-      return response;
+         Message = response.Message,
+         Succeeded = response.Succeeded
+      };
    }
 }

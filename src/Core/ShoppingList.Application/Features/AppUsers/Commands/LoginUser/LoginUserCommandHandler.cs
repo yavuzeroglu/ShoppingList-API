@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using ShoppingList.Application.Abstractions.Services;
 using ShoppingList.Application.Abstractions.Tokens;
 using ShoppingList.Application.DTOs;
 using ShoppingList.Domain.Entities.Identity;
@@ -8,37 +9,24 @@ namespace ShoppingList.Application.Features.AppUsers.Commands.LoginUser;
 
 public class LoginUserCommandHandler : IRequestHandler<LoginUserCommandRequest, LoginUserCommandResponse>
 {
-    private readonly UserManager<AppUser> _userManager;
-    private readonly ITokenService _tokenService;
-    public LoginUserCommandHandler(UserManager<AppUser> userManager, ITokenService tokenService)
+    private readonly IAuthService _authService;
+
+    public LoginUserCommandHandler(IAuthService authService)
     {
-        _userManager = userManager;
-        _tokenService = tokenService;
+        _authService = authService;
     }
 
     public async Task<LoginUserCommandResponse> Handle(LoginUserCommandRequest request, CancellationToken cancellationToken)
     {
-        AppUser? user = await _userManager.FindByNameAsync(request.UsernameOrEmail);
-        if (user is null)
-            user = await _userManager.FindByEmailAsync(request.UsernameOrEmail);
 
-        if (user is null)
-            throw new Exception("Kullanici veya sifre hatali");
+        TokenDTO token = await _authService.LoginAsync(request.UsernameOrEmail, request.Password, 2);
 
-        bool checkPassword = await _userManager.CheckPasswordAsync(user, request.Password);
-
-        if (checkPassword)
+        return new LoginUserCommandResponse()
         {
-            TokenDTO token = _tokenService.CreateAccessToken(5);
-            return new()
-            {
-                Token = token.AccessToken,
-                Expiration = token.Expiration
-            };
-        }
-
-        throw new Exception("Kullanici adi veya sifre hatali");
-
+            Token = token.AccessToken,
+            Expiration = token.Expiration,
+            RefreshToken = token.RefreshToken
+        };
     }
 }
 

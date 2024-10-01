@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ShoppingList.Application.Abstractions.Services;
 using ShoppingList.Application.Repositories.Brands;
 using ShoppingList.Application.Repositories.Categories;
 using ShoppingList.Application.Repositories.Products;
@@ -9,6 +10,7 @@ using ShoppingList.Persistance.Context;
 using ShoppingList.Persistance.Repositories.Brands;
 using ShoppingList.Persistance.Repositories.Categories;
 using ShoppingList.Persistance.Repositories.Products;
+using ShoppingList.Persistance.Services;
 
 namespace ShoppingList.Persistance;
 
@@ -41,5 +43,11 @@ public static class ServiceRegistration
 
       services.AddScoped<IBrandReadRepository, BrandReadRepository>();
       services.AddScoped<IBrandWriteRepository, BrandWriteRepository>();
+   }
+
+   public static void ConfigureServiceManager(this IServiceCollection services)
+   {
+      services.AddScoped<IUserService, UserService>();
+      services.AddScoped<IAuthService, AuthService>();
    }
 }

@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.PersistanceContextConfiguration(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
+builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureApplicationRegistration();
 builder.Services.AddInfrastructureServices();
 builder.Services.ConfigureIdentity(builder.Configuration);

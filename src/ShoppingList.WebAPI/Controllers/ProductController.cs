@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingList.Application.Features.Products.Commands.CreateProduct;
 using ShoppingList.Application.Features.Products.Commands.DeleteProduct;
@@ -9,6 +10,7 @@ using ShoppingList.Application.Features.Products.Queries.GetByIdProduct;
 
 namespace ShoppingList.WebAPI.Controllers
 {
+
     public class ProductController : BaseApiController
     {
         private readonly IMediator _mediator;
@@ -25,6 +27,8 @@ namespace ShoppingList.WebAPI.Controllers
             return Ok(response);
         }
 
+
+        [Authorize(AuthenticationSchemes = "Admin")]
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetById([FromRoute] GetByIdProductQueryRequest request)
         {
