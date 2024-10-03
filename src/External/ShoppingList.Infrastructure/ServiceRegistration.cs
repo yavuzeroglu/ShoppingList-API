@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using ShoppingList.Application.Abstractions.Services;
 using ShoppingList.Application.Abstractions.Tokens;
+using ShoppingList.Infrastructure.Services;
 using ShoppingList.Infrastructure.Services.Token;
 
 namespace ShoppingList.Infrastructure;
@@ -13,6 +15,7 @@ public static class ServiceRegistration
     public static void AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IMailService, MailService>();
     }
 
     public static void ConfigureIdentity(this IServiceCollection services, IConfiguration configuration)
