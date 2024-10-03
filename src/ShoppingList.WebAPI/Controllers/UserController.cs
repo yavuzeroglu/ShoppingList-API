@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ShoppingList.Application.Abstractions.Services;
 using ShoppingList.Application.Features.AppUsers.Commands.CreateUser;
 using ShoppingList.Application.Features.AppUsers.Commands.LoginUser;
+using ShoppingList.Application.Features.AppUsers.Commands.UpdatePassword;
 
 namespace ShoppingList.WebAPI.Controllers;
 
@@ -25,11 +26,11 @@ public class UserController : BaseApiController
         return Ok(response);
     }
 
-    [HttpGet]
-    public async Task<IActionResult> ExampleMailTest()
+    [HttpPost("[action]")]
+    public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordCommandRequest request)
     {
-        await _mailService.SendMessageAsync("nuray.ilhan.eroglu@icloud.com", "Test Mail", $"Anne bu bir deneme mailidir. <i>Seni</i> <b>Seviyorum</b>");
-        return Ok();
+        await _mediator.Send(request);
+        return StatusCode(StatusCodes.Status200OK, "Şifre Başarıyla Güncellendi!");
     }
 }
 

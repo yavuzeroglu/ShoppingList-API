@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Mail;
+using System.Text;
 using Microsoft.Extensions.Configuration;
 using ShoppingList.Application.Abstractions.Services;
 
@@ -14,12 +15,12 @@ public class MailService : IMailService
       _configuration = configuration;
    }
 
-   public async Task SendMessageAsync(string to, string subject, string body, bool isBodyHtml = true)
+   public async Task SendMailAsync(string to, string subject, string body, bool isBodyHtml = true)
    {
-      await SendMessageAsync(new[] { to }, subject, body, isBodyHtml);
+      await SendMailAsync(new[] { to }, subject, body, isBodyHtml);
    }
 
-   public async Task SendMessageAsync(string[] tos, string subject, string body, bool isBodyHtml = true)
+   public async Task SendMailAsync(string[] tos, string subject, string body, bool isBodyHtml = true)
    {
       MailMessage mail = new();
       mail.IsBodyHtml = isBodyHtml;
@@ -40,5 +41,19 @@ public class MailService : IMailService
       smtp.Host = _configuration["Mail:Host"];
       smtp.EnableSsl = true;
       await smtp.SendMailAsync(mail);
+   }
+
+   public async Task SendPasswordMailAsync(string to, string userId, string resetToken)
+   {
+      StringBuilder mail = new();
+      mail.AppendLine("Merhaba <br> <br> Eğer yeni şifre talebinde bulunduysanız aşağıdaki linkten yeni şifre belirleyebilirsiniz. ");
+      mail.Append("<a target=\"_blank\" href=\"");
+      mail.Append(_configuration["BaseSampleUrl"]);
+      mail.Append("/password-reset/");
+      mail.Append(userId);
+      mail.Append("/");
+      mail.Append(resetToken);
+      mail.Append("\">Yeni Şifre talebi için tıklayınz.</a> <br> <br> <br> <span> YE - Always Learner </span>");
+      await SendMailAsync(to, "Şifre Yenileme Talebi", mail.ToString());
    }
 }

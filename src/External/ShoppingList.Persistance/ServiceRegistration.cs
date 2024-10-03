@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,7 @@ public static class ServiceRegistration
    {
       services.AddDbContext<ShoppingListDbContext>(opt =>
          opt.UseNpgsql(configuration.GetConnectionString("PostgreSQL")));
+
       services.AddIdentityCore<AppUser>(opt =>
       {
          opt.Password.RequireNonAlphanumeric = false;
@@ -30,7 +32,9 @@ public static class ServiceRegistration
          opt.SignIn.RequireConfirmedEmail = false;
       })
          .AddRoles<AppRole>()
-         .AddEntityFrameworkStores<ShoppingListDbContext>();
+         .AddEntityFrameworkStores<ShoppingListDbContext>()
+         .AddDefaultTokenProviders();
+
    }
 
    public static void ConfigureRepositoryManager(this IServiceCollection services)

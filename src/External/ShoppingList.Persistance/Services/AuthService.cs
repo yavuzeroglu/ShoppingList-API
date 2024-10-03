@@ -1,7 +1,10 @@
+using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using ShoppingList.Application.Abstractions.Services;
 using ShoppingList.Application.Abstractions.Tokens;
 using ShoppingList.Application.DTOs;
+using ShoppingList.Application.Helpers;
 using ShoppingList.Domain.Entities.Identity;
 
 namespace ShoppingList.Persistance.Services;
@@ -11,12 +14,14 @@ public class AuthService : IAuthService
    private readonly UserManager<AppUser> _userManager;
    private readonly ITokenService _tokenService;
    private readonly IUserService _userService;
+   private readonly IMailService _mailService;
 
-   public AuthService(UserManager<AppUser> userManager, ITokenService tokenService, IUserService userService)
+   public AuthService(UserManager<AppUser> userManager, ITokenService tokenService, IUserService userService, IMailService mailService)
    {
       _userManager = userManager;
       _tokenService = tokenService;
       _userService = userService;
+      _mailService = mailService;
    }
 
    public async Task<TokenDTO> LoginAsync(string usernameOrEmail, string password, int accessTokenLifetime)
@@ -33,7 +38,7 @@ public class AuthService : IAuthService
       if (checkPassword)
       {
          TokenDTO token = _tokenService.CreateAccessToken(accessTokenLifetime);
-         await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 1);
+         await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.Expiration, 1);
          return new()
          {
             AccessToken = token.AccessToken,
@@ -50,9 +55,39 @@ public class AuthService : IAuthService
       if (user is not null && user?.RefreshTokenEndDate > DateTime.UtcNow)
       {
          TokenDTO token = _tokenService.CreateAccessToken(2);
-         await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 1);
+         await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.Expiration, 1);
          return token;
-      } else 
+      }
+      else
          throw new Exception("Kullanici Bulunamadi");
    }
+
+
+   public async Task PasswordResetAsync(string email)
+   {
+      AppUser? user = await _userManager.FindByEmailAsync(email);
+      if (user is not null)
+      {
+         string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+         
+         resetToken = resetToken.UrlEncode();
+
+         await _mailService.SendPasswordMailAsync(email, user.Id, resetToken);
+      }
+      else
+         throw new Exception("Mail Kayıtlı Değil");
+   }
+
+   public async Task<bool> VerifyResetTokenAsync(string resetToken, string userId)
+   {
+      AppUser? user = await _userManager.FindByIdAsync(userId);
+      if (user is not null)
+      {
+         resetToken = resetToken.UrlDecode();
+
+         return await _userManager.VerifyUserTokenAsync(user, _userManager.Options.Tokens.PasswordResetTokenProvider, "ResetPassword", resetToken);
+      }
+      return false;
+   }
+
 }
