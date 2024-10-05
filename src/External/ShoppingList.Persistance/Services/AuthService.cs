@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using ShoppingList.Application.Abstractions.Services;
@@ -16,15 +17,16 @@ public class AuthService : IAuthService
    private readonly IUserService _userService;
    private readonly IMailService _mailService;
 
-   public AuthService(UserManager<AppUser> userManager, ITokenService tokenService, IUserService userService, IMailService mailService)
-   {
-      _userManager = userManager;
-      _tokenService = tokenService;
-      _userService = userService;
-      _mailService = mailService;
-   }
 
-   public async Task<TokenDTO> LoginAsync(string usernameOrEmail, string password, int accessTokenLifetime)
+    public AuthService(UserManager<AppUser> userManager, ITokenService tokenService, IUserService userService, IMailService mailService)
+    {
+        _userManager = userManager;
+        _tokenService = tokenService;
+        _userService = userService;
+        _mailService = mailService;
+    }
+
+    public async Task<TokenDTO> LoginAsync(string usernameOrEmail, string password, int accessTokenLifetime)
    {
       AppUser? user = await _userManager.FindByNameAsync(usernameOrEmail);
       if (user is null)
@@ -37,7 +39,7 @@ public class AuthService : IAuthService
 
       if (checkPassword)
       {
-         TokenDTO token = _tokenService.CreateAccessToken(accessTokenLifetime);
+         TokenDTO token = _tokenService.CreateAccessToken(accessTokenLifetime, user);
          await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.Expiration, 1);
          return new()
          {
@@ -54,7 +56,7 @@ public class AuthService : IAuthService
       AppUser? user = _userManager.Users.FirstOrDefault(u => u.RefreshToken == refreshToken);
       if (user is not null && user?.RefreshTokenEndDate > DateTime.UtcNow)
       {
-         TokenDTO token = _tokenService.CreateAccessToken(2);
+         TokenDTO token = _tokenService.CreateAccessToken(2, user);
          await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.Expiration, 1);
          return token;
       }
@@ -69,7 +71,6 @@ public class AuthService : IAuthService
       if (user is not null)
       {
          string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-         
          resetToken = resetToken.UrlEncode();
 
          await _mailService.SendPasswordMailAsync(email, user.Id, resetToken);

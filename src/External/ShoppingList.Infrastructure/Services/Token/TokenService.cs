@@ -1,11 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using ShoppingList.Application.Abstractions.Tokens;
 using ShoppingList.Application.DTOs;
+using ShoppingList.Domain.Entities.Identity;
 
 namespace ShoppingList.Infrastructure.Services.Token;
 
@@ -19,7 +20,7 @@ public class TokenService : ITokenService
         _configuration = configuration;
     }
 
-    public TokenDTO CreateAccessToken(int minutes)
+    public TokenDTO CreateAccessToken(int minutes, AppUser user)
     {
         TokenDTO token = new();
 
@@ -32,7 +33,8 @@ public class TokenService : ITokenService
          issuer: _configuration["JWT:Issuer"],
          expires: token.Expiration,
          notBefore: DateTime.UtcNow,
-         signingCredentials: new(securityKey, SecurityAlgorithms.HmacSha256)
+         signingCredentials: new(securityKey, SecurityAlgorithms.HmacSha256),
+         claims: new List<Claim> { new(ClaimTypes.Name, user.UserName) }
         );
 
         JwtSecurityTokenHandler tokenHandler = new();

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +35,10 @@ public static class ServiceRegistration
                     ValidIssuer = configuration["JWT:Issuer"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"])),
                     LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
-                        expires != null ? expires > DateTime.UtcNow : false
+                        expires != null ? expires > DateTime.UtcNow : false,
+
+
+                    NameClaimType = ClaimTypes.Name
                 };
             });
     }
