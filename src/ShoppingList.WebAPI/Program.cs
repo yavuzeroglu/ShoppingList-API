@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Context;
 using Serilog.Core;
@@ -41,6 +42,7 @@ Logger log = new LoggerConfiguration()
             { "UserName", new UsernameColumnWriter()}
 
         })
+    .WriteTo.Seq(builder.Configuration["Seq:ServerUrl"])
     .Enrich.FromLogContext()
     .MinimumLevel.Information()
     .CreateLogger();
@@ -65,7 +67,38 @@ builder.Services.AddControllers()
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(s =>
+{
+    s.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "ShoppingList API",
+        Version = "v1",
+        Description = "Shopping API Swagger Client"
+    });
+    s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Put **_ONLY_** yourt JWT Bearer token on textbox below!"
+    });
+    s.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new List<string>()
+        }
+    });
+});
 
 
 
