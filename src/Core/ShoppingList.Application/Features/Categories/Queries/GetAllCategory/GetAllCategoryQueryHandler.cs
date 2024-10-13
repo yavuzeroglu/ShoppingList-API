@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using ShoppingList.Application.Repositories.Categories;
+using ShoppingList.Application.Abstractions.Repositories.Categories;
 
 namespace ShoppingList.Application.Features.Categories.Queries.GetAllCategory;
 

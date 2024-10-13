@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 using ShoppingList.Domain.Entities.Common;
 
-namespace ShoppingList.Application.Repositories;
+namespace ShoppingList.Application.Abstractions.Repositories;
 
 public interface IReadRepository<T> : IRepository<T> where T : BaseEntity
 {

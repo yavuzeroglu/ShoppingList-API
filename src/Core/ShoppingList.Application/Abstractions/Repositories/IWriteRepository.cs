@@ -1,6 +1,6 @@
 using ShoppingList.Domain.Entities.Common;
 
-namespace ShoppingList.Application.Repositories;
+namespace ShoppingList.Application.Abstractions.Repositories;
 
 public interface IWriteRepository<T> : IRepository<T> where T: BaseEntity
 {

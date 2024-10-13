@@ -6,6 +6,8 @@ public class GetAllProductQueryResponse
    public string Name { get; set; } = string.Empty;
    public int CategoryId { get; set; }
    public int BrandId { get; set; }
+   public List<string>? Images { get; set; }
    public bool IsActive { get; set; }
+   public int ImageId { get; set; }
    public string CreatedDate { get; set; }
 }

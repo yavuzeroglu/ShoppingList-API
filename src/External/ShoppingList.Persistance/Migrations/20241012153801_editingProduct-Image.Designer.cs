@@ -12,8 +12,8 @@ using ShoppingList.Persistance.Context;
 namespace ShoppingList.Persistance.Migrations
 {
     [DbContext(typeof(ShoppingListDbContext))]
-    [Migration("20240930181451_RefreshTokenAdded")]
-    partial class RefreshTokenAdded
+    [Migration("20241012153801_editingProduct-Image")]
+    partial class editingProductImage
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -153,19 +153,19 @@ namespace ShoppingList.Persistance.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2024, 9, 30, 18, 14, 51, 223, DateTimeKind.Utc).AddTicks(1244),
+                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(908),
                             Name = "TEST"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2024, 9, 30, 18, 14, 51, 223, DateTimeKind.Utc).AddTicks(1246),
+                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(911),
                             Name = "Reyoncunuz"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2024, 9, 30, 18, 14, 51, 223, DateTimeKind.Utc).AddTicks(1248),
+                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(913),
                             Name = "ETİ"
                         });
                 });
@@ -346,6 +346,30 @@ namespace ShoppingList.Persistance.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("ShoppingList.Domain.Entities.Image", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Path")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Images");
+                });
+
             modelBuilder.Entity("ShoppingList.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -383,7 +407,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 1,
                             BrandId = 1,
                             CategoryId = 7,
-                            CreatedDate = new DateTime(2024, 9, 30, 18, 14, 51, 223, DateTimeKind.Utc).AddTicks(6749),
+                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(5807),
                             IsActive = false,
                             Name = "Portakal"
                         },
@@ -392,7 +416,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 2,
                             BrandId = 1,
                             CategoryId = 7,
-                            CreatedDate = new DateTime(2024, 9, 30, 18, 14, 51, 223, DateTimeKind.Utc).AddTicks(6753),
+                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(5811),
                             IsActive = false,
                             Name = "Greyfurt"
                         },
@@ -401,7 +425,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 3,
                             BrandId = 1,
                             CategoryId = 6,
-                            CreatedDate = new DateTime(2024, 9, 30, 18, 14, 51, 223, DateTimeKind.Utc).AddTicks(6754),
+                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(5812),
                             IsActive = false,
                             Name = "Kavun"
                         },
@@ -410,7 +434,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 4,
                             BrandId = 1,
                             CategoryId = 6,
-                            CreatedDate = new DateTime(2024, 9, 30, 18, 14, 51, 223, DateTimeKind.Utc).AddTicks(6755),
+                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(5813),
                             IsActive = false,
                             Name = "Karpuz"
                         },
@@ -419,7 +443,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 5,
                             BrandId = 1,
                             CategoryId = 1,
-                            CreatedDate = new DateTime(2024, 9, 30, 18, 14, 51, 223, DateTimeKind.Utc).AddTicks(6756),
+                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(5814),
                             IsActive = false,
                             Name = "Tarhana"
                         });
@@ -483,6 +507,17 @@ namespace ShoppingList.Persistance.Migrations
                         .HasForeignKey("ParentCategoryId");
 
                     b.Navigation("ParentCategory");
+                });
+
+            modelBuilder.Entity("ShoppingList.Domain.Entities.Image", b =>
+                {
+                    b.HasOne("ShoppingList.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ShoppingList.Domain.Entities.Product", b =>

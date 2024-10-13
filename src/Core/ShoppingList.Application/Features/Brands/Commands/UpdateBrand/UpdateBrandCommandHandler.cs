@@ -1,7 +1,6 @@
 using MediatR;
 using SendGrid.Helpers.Errors.Model;
-using ShoppingList.Application.Repositories.Brands;
-
+using ShoppingList.Application.Abstractions.Repositories.Brands;
 namespace ShoppingList.Application.Features.Brands.Commands.UpdateBrand;
 
 public class UpdateBrandCommandHandler : IRequestHandler<UpdateBrandCommandRequest, Unit>

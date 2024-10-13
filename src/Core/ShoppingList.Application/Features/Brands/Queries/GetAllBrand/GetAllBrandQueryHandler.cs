@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using ShoppingList.Application.Repositories.Brands;
+using ShoppingList.Application.Abstractions.Repositories.Brands;
 
 namespace ShoppingList.Application.Features.Brands.Queries.GetAllBrand;
 

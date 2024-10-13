@@ -2,13 +2,13 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ShoppingList.Application.Abstractions.Repositories.Categories;
 using ShoppingList.Application.DTOs.Categories;
 using ShoppingList.Application.Features.Categories.Commands.CreateCategory;
 using ShoppingList.Application.Features.Categories.Commands.DeleteCategory;
 using ShoppingList.Application.Features.Categories.Commands.UpdateCategory;
 using ShoppingList.Application.Features.Categories.Queries.GetAllCategory;
 using ShoppingList.Application.Features.Categories.Queries.GetByIdCategory;
-using ShoppingList.Application.Repositories.Categories;
 
 
 namespace ShoppingList.WebAPI.Controllers;
@@ -16,15 +16,12 @@ namespace ShoppingList.WebAPI.Controllers;
 [Route("api/Categories")]
 public class CategoryController : BaseApiController
 {
-   private readonly ICategoryReadRepository _categoryReadRepository;
-   private readonly ICategoryWriteRepository _categoryWriteRepository;
+   private readonly ICategoryReadRepository _categoryReadRepository;   
    private readonly IMapper _mapper;
    private readonly IMediator _mediator;
 
-   public CategoryController(ICategoryReadRepository categoryReadRepository, ICategoryWriteRepository categoryWriteRepository, IMapper mapper, IMediator mediator)
+   public CategoryController(IMapper mapper, IMediator mediator)
    {
-      _categoryReadRepository = categoryReadRepository;
-      _categoryWriteRepository = categoryWriteRepository;
       _mapper = mapper;
       _mediator = mediator;
    }

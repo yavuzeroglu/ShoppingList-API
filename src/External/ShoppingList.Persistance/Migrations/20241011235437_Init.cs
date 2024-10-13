@@ -4,24 +4,16 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ShoppingList.Persistance.Migrations
 {
     /// <inheritdoc />
-    public partial class IdentityDbContextAdded : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
-                name: "BrandId",
-                table: "Products",
-                type: "integer",
-                nullable: false,
-                defaultValue: 0,
-                oldClrType: typeof(int),
-                oldType: "integer",
-                oldNullable: true);
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -41,6 +33,8 @@ namespace ShoppingList.Persistance.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
+                    RefreshToken = table.Column<string>(type: "text", nullable: true),
+                    RefreshTokenEndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -59,6 +53,39 @@ namespace ShoppingList.Persistance.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Brands",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Brands", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    ParentCategoryId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Categories_Categories_ParentCategoryId",
+                        column: x => x.ParentCategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -167,61 +194,106 @@ namespace ShoppingList.Persistance.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.UpdateData(
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CategoryId = table.Column<int>(type: "integer", nullable: false),
+                    BrandId = table.Column<int>(type: "integer", nullable: false),
+                    ImageId = table.Column<int>(type: "integer", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Products_Brands_BrandId",
+                        column: x => x.BrandId,
+                        principalTable: "Brands",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Products_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Images",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ProductId = table.Column<int>(type: "integer", nullable: false),
+                    FileName = table.Column<string>(type: "text", nullable: true),
+                    Path = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Images", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Images_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
                 table: "Brands",
-                keyColumn: "Id",
-                keyValue: 1,
-                column: "CreatedDate",
-                value: new DateTime(2024, 9, 27, 16, 38, 36, 45, DateTimeKind.Utc).AddTicks(7558));
+                columns: new[] { "Id", "CreatedDate", "Name" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2024, 10, 11, 23, 54, 37, 408, DateTimeKind.Utc).AddTicks(8472), "TEST" },
+                    { 2, new DateTime(2024, 10, 11, 23, 54, 37, 408, DateTimeKind.Utc).AddTicks(8476), "Reyoncunuz" },
+                    { 3, new DateTime(2024, 10, 11, 23, 54, 37, 408, DateTimeKind.Utc).AddTicks(8477), "ETİ" }
+                });
 
-            migrationBuilder.UpdateData(
-                table: "Brands",
-                keyColumn: "Id",
-                keyValue: 2,
-                column: "CreatedDate",
-                value: new DateTime(2024, 9, 27, 16, 38, 36, 45, DateTimeKind.Utc).AddTicks(7561));
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "Id", "Name", "ParentCategoryId" },
+                values: new object[,]
+                {
+                    { 1, "Temel Gıda", null },
+                    { 2, "Meyve Sebze", null },
+                    { 8, "İçecek", null },
+                    { 3, "Meyve", 2 },
+                    { 9, "Gazlı İçecek", 8 },
+                    { 10, "Gazsız İçecek", 8 }
+                });
 
-            migrationBuilder.UpdateData(
-                table: "Brands",
-                keyColumn: "Id",
-                keyValue: 3,
-                column: "CreatedDate",
-                value: new DateTime(2024, 9, 27, 16, 38, 36, 45, DateTimeKind.Utc).AddTicks(7562));
-
-            migrationBuilder.UpdateData(
+            migrationBuilder.InsertData(
                 table: "Products",
-                keyColumn: "Id",
-                keyValue: 1,
-                column: "CreatedDate",
-                value: new DateTime(2024, 9, 27, 16, 38, 36, 46, DateTimeKind.Utc).AddTicks(2290));
+                columns: new[] { "Id", "BrandId", "CategoryId", "CreatedDate", "ImageId", "IsActive", "Name" },
+                values: new object[] { 5, 1, 1, new DateTime(2024, 10, 11, 23, 54, 37, 409, DateTimeKind.Utc).AddTicks(4704), null, false, "Tarhana" });
 
-            migrationBuilder.UpdateData(
-                table: "Products",
-                keyColumn: "Id",
-                keyValue: 2,
-                column: "CreatedDate",
-                value: new DateTime(2024, 9, 27, 16, 38, 36, 46, DateTimeKind.Utc).AddTicks(2294));
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "Id", "Name", "ParentCategoryId" },
+                values: new object[,]
+                {
+                    { 4, "Doğranmış, Ayıklanmış Meyveler", 3 },
+                    { 5, "Egzotik Meyveler", 3 },
+                    { 6, "Kavun ve Karpuz", 3 },
+                    { 7, "Narenciye", 3 }
+                });
 
-            migrationBuilder.UpdateData(
+            migrationBuilder.InsertData(
                 table: "Products",
-                keyColumn: "Id",
-                keyValue: 3,
-                column: "CreatedDate",
-                value: new DateTime(2024, 9, 27, 16, 38, 36, 46, DateTimeKind.Utc).AddTicks(2295));
-
-            migrationBuilder.UpdateData(
-                table: "Products",
-                keyColumn: "Id",
-                keyValue: 4,
-                column: "CreatedDate",
-                value: new DateTime(2024, 9, 27, 16, 38, 36, 46, DateTimeKind.Utc).AddTicks(2296));
-
-            migrationBuilder.UpdateData(
-                table: "Products",
-                keyColumn: "Id",
-                keyValue: 5,
-                column: "CreatedDate",
-                value: new DateTime(2024, 9, 27, 16, 38, 36, 46, DateTimeKind.Utc).AddTicks(2297));
+                columns: new[] { "Id", "BrandId", "CategoryId", "CreatedDate", "ImageId", "IsActive", "Name" },
+                values: new object[,]
+                {
+                    { 1, 1, 7, new DateTime(2024, 10, 11, 23, 54, 37, 409, DateTimeKind.Utc).AddTicks(4697), null, false, "Portakal" },
+                    { 2, 1, 7, new DateTime(2024, 10, 11, 23, 54, 37, 409, DateTimeKind.Utc).AddTicks(4701), null, false, "Greyfurt" },
+                    { 3, 1, 6, new DateTime(2024, 10, 11, 23, 54, 37, 409, DateTimeKind.Utc).AddTicks(4702), null, false, "Kavun" },
+                    { 4, 1, 6, new DateTime(2024, 10, 11, 23, 54, 37, 409, DateTimeKind.Utc).AddTicks(4703), null, false, "Karpuz" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -259,6 +331,27 @@ namespace ShoppingList.Persistance.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_ParentCategoryId",
+                table: "Categories",
+                column: "ParentCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_ProductId",
+                table: "Images",
+                column: "ProductId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_BrandId",
+                table: "Products",
+                column: "BrandId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CategoryId",
+                table: "Products",
+                column: "CategoryId");
         }
 
         /// <inheritdoc />
@@ -280,74 +373,22 @@ namespace ShoppingList.Persistance.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Images");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
-            migrationBuilder.AlterColumn<int>(
-                name: "BrandId",
-                table: "Products",
-                type: "integer",
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "integer");
+            migrationBuilder.DropTable(
+                name: "Products");
 
-            migrationBuilder.UpdateData(
-                table: "Brands",
-                keyColumn: "Id",
-                keyValue: 1,
-                column: "CreatedDate",
-                value: new DateTime(2024, 9, 17, 12, 28, 46, 427, DateTimeKind.Utc).AddTicks(8552));
+            migrationBuilder.DropTable(
+                name: "Brands");
 
-            migrationBuilder.UpdateData(
-                table: "Brands",
-                keyColumn: "Id",
-                keyValue: 2,
-                column: "CreatedDate",
-                value: new DateTime(2024, 9, 17, 12, 28, 46, 427, DateTimeKind.Utc).AddTicks(8555));
-
-            migrationBuilder.UpdateData(
-                table: "Brands",
-                keyColumn: "Id",
-                keyValue: 3,
-                column: "CreatedDate",
-                value: new DateTime(2024, 9, 17, 12, 28, 46, 427, DateTimeKind.Utc).AddTicks(8556));
-
-            migrationBuilder.UpdateData(
-                table: "Products",
-                keyColumn: "Id",
-                keyValue: 1,
-                column: "CreatedDate",
-                value: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.UpdateData(
-                table: "Products",
-                keyColumn: "Id",
-                keyValue: 2,
-                column: "CreatedDate",
-                value: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.UpdateData(
-                table: "Products",
-                keyColumn: "Id",
-                keyValue: 3,
-                column: "CreatedDate",
-                value: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.UpdateData(
-                table: "Products",
-                keyColumn: "Id",
-                keyValue: 4,
-                column: "CreatedDate",
-                value: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.UpdateData(
-                table: "Products",
-                keyColumn: "Id",
-                keyValue: 5,
-                column: "CreatedDate",
-                value: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+            migrationBuilder.DropTable(
+                name: "Categories");
         }
     }
 }
