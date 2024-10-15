@@ -8,6 +8,8 @@ using Serilog.Sinks.PostgreSQL;
 using ShoppingList.Application;
 using ShoppingList.Application.Exceptions;
 using ShoppingList.Infrastructure;
+using ShoppingList.Infrastructure.Services.Storages;
+
 using ShoppingList.Persistance;
 using ShoppingList.WebAPI.LogConfig.ColumnWriters;
 
@@ -22,6 +24,8 @@ builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureApplicationRegistration();
 builder.Services.AddInfrastructureServices();
 builder.Services.ConfigureIdentity(builder.Configuration);
+// builder.Services.AddStorage<LocalStorage>();
+builder.Services.AddStorage<AzureStorage>();
 
 
 
@@ -111,6 +115,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseStaticFiles();
 app.UseSerilogRequestLogging();
 
 app.ConfigureExceptionHandlingMiddleware();

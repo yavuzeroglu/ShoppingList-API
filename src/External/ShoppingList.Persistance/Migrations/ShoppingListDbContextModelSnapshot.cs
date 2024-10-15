@@ -144,7 +144,7 @@ namespace ShoppingList.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands");
+                    b.ToTable("Brands", (string)null);
 
                     b.HasData(
                         new
@@ -185,7 +185,7 @@ namespace ShoppingList.Persistance.Migrations
 
                     b.HasIndex("ParentCategoryId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
 
                     b.HasData(
                         new
@@ -364,7 +364,7 @@ namespace ShoppingList.Persistance.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Images");
+                    b.ToTable("Images", (string)null);
                 });
 
             modelBuilder.Entity("ShoppingList.Domain.Entities.Product", b =>
@@ -396,7 +396,7 @@ namespace ShoppingList.Persistance.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
 
                     b.HasData(
                         new

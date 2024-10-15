@@ -2,29 +2,37 @@ using MediatR;
 using ShoppingList.Application.Abstractions.Repositories.Products;
 using ShoppingList.Domain.Entities;
 using ShoppingList.Application.Abstractions.Storage;
-using ShoppingList.Application.Abstractions.Repositories.ProductImage;
+using AutoMapper;
 
 namespace ShoppingList.Application.Features.Products.Commands.CreateProduct;
 
 public class CreateProductCommandHandler : IRequestHandler<CreateProductCommandRequest, Unit>
 {
+   private readonly IStorageService _storageService;
    private readonly IProductWriteRepository _productWriteRepository;
-   public CreateProductCommandHandler(IProductWriteRepository productWriteRepository)
+   private readonly IMapper _mapper;
+   public CreateProductCommandHandler(IProductWriteRepository productWriteRepository, IStorageService storageService, IMapper mapper)
    {
       _productWriteRepository = productWriteRepository;
-      
+      _storageService = storageService;
+      _mapper = mapper;
    }
 
    public async Task<Unit> Handle(CreateProductCommandRequest request, CancellationToken cancellationToken)
    {
-      Product product = new()
+      Product product = _mapper.Map<Product>(request);
+      if (request.Photo is not null)
       {
-         Name = request.Name,
-         BrandId = request.BrandId,
-         CategoryId = request.CategoryId,
-         IsActive = request.IsActive,
-         CreatedDate = request.CreatedDate
-      };
+         (string pathOrContainer, string fileName) uploadImage = await _storageService.UploadAsync("images", request.Photo);
+
+         product.Images.Add(new Image()
+         {
+            Path = uploadImage.pathOrContainer,
+            FileName = uploadImage.fileName,
+            ProductId = product.Id
+         });
+      }
+
       await _productWriteRepository.AddAsync(product);
       await _productWriteRepository.SaveAsync();
       return Unit.Value;

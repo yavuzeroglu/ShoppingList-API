@@ -2,14 +2,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ShoppingList.Application.Abstractions.Repositories.Brands;
+using ShoppingList.Application.Abstractions.Repositories.Categories;
+using ShoppingList.Application.Abstractions.Repositories.ProductImage;
+using ShoppingList.Application.Abstractions.Repositories.Products;
 using ShoppingList.Application.Abstractions.Services;
-using ShoppingList.Application.Repositories.Brands;
-using ShoppingList.Application.Repositories.Categories;
-using ShoppingList.Application.Repositories.Products;
 using ShoppingList.Domain.Entities.Identity;
 using ShoppingList.Persistance.Context;
 using ShoppingList.Persistance.Repositories.Brands;
 using ShoppingList.Persistance.Repositories.Categories;
+using ShoppingList.Persistance.Repositories.ProductImage;
 using ShoppingList.Persistance.Repositories.Products;
 using ShoppingList.Persistance.Services;
 
@@ -47,6 +49,9 @@ public static class ServiceRegistration
 
       services.AddScoped<IBrandReadRepository, BrandReadRepository>();
       services.AddScoped<IBrandWriteRepository, BrandWriteRepository>();
+
+      services.AddScoped<IProductImageReadRepository, ProductImageReadRepository>();
+      services.AddScoped<IProductImageWriteRepository, ProductImageWriteRepository>();
    }
 
    public static void ConfigureServiceManager(this IServiceCollection services)
