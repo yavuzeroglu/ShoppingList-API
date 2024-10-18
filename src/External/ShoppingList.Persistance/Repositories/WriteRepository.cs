@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using ShoppingList.Application.Repositories;
+using ShoppingList.Application.Abstractions.Repositories;
 using ShoppingList.Domain.Entities.Common;
 using ShoppingList.Persistance.Context;
 

@@ -1,28 +1,20 @@
-using System.Net;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ShoppingList.Application.Features.Brands.Commands.CreateBrand;
 using ShoppingList.Application.Features.Brands.Commands.DeleteBrand;
 using ShoppingList.Application.Features.Brands.Commands.UpdateBrand;
 using ShoppingList.Application.Features.Brands.Queries.GetAllBrand;
 using ShoppingList.Application.Features.Brands.Queries.GetByIdBrand;
-using ShoppingList.Application.Repositories.Brands;
-using ShoppingList.Domain.Entities;
-using ShoppingList.Persistance.Context;
 
 namespace ShoppingList.WebAPI.Controllers;
 
 public class BrandController : BaseApiController
 {
-   private readonly IBrandWriteRepository _brandWriteRepository;
-   private readonly IBrandReadRepository _brandReadRepository;
+
    private readonly IMediator _mediator;
 
-   public BrandController(IBrandWriteRepository brandWriteRepository, IBrandReadRepository brandReadRepository, IMediator mediator)
+   public BrandController(IMediator mediator)
    {
-      _brandWriteRepository = brandWriteRepository;
-      _brandReadRepository = brandReadRepository;
       _mediator = mediator;
    }
 

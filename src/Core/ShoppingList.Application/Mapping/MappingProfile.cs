@@ -2,6 +2,7 @@ using AutoMapper;
 using ShoppingList.Application.DTOs.Categories;
 using ShoppingList.Application.DTOs.Products;
 using ShoppingList.Application.Features.Categories.Commands.CreateCategory;
+using ShoppingList.Application.Features.Products.Commands.CreateProduct;
 using ShoppingList.Application.Features.Products.Commands.UpdateProduct;
 using ShoppingList.Domain.Entities;
 
@@ -12,8 +13,7 @@ public class MappingProfile : Profile
 {
    public MappingProfile()
    {
-
-      CreateMap<CreateProductDTO, Product>().ReverseMap();
+      CreateMap<CreateProductCommandRequest, Product>().ReverseMap();
       CreateMap<UpdateProductCommandRequest, Product>();
       CreateMap<Product, ListProductDTO>()
          .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand.Name))

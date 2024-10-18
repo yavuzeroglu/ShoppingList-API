@@ -12,8 +12,8 @@ using ShoppingList.Persistance.Context;
 namespace ShoppingList.Persistance.Migrations
 {
     [DbContext(typeof(ShoppingListDbContext))]
-    [Migration("20240927163836_IdentityDbContextAdded")]
-    partial class IdentityDbContextAdded
+    [Migration("20241011235437_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -153,19 +153,19 @@ namespace ShoppingList.Persistance.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2024, 9, 27, 16, 38, 36, 45, DateTimeKind.Utc).AddTicks(7558),
+                            CreatedDate = new DateTime(2024, 10, 11, 23, 54, 37, 408, DateTimeKind.Utc).AddTicks(8472),
                             Name = "TEST"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2024, 9, 27, 16, 38, 36, 45, DateTimeKind.Utc).AddTicks(7561),
+                            CreatedDate = new DateTime(2024, 10, 11, 23, 54, 37, 408, DateTimeKind.Utc).AddTicks(8476),
                             Name = "Reyoncunuz"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2024, 9, 27, 16, 38, 36, 45, DateTimeKind.Utc).AddTicks(7562),
+                            CreatedDate = new DateTime(2024, 10, 11, 23, 54, 37, 408, DateTimeKind.Utc).AddTicks(8477),
                             Name = "ETİ"
                         });
                 });
@@ -318,6 +318,12 @@ namespace ShoppingList.Persistance.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("RefreshTokenEndDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
@@ -340,6 +346,31 @@ namespace ShoppingList.Persistance.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("ShoppingList.Domain.Entities.Image", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Path")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("Images");
+                });
+
             modelBuilder.Entity("ShoppingList.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -356,6 +387,9 @@ namespace ShoppingList.Persistance.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("ImageId")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -377,7 +411,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 1,
                             BrandId = 1,
                             CategoryId = 7,
-                            CreatedDate = new DateTime(2024, 9, 27, 16, 38, 36, 46, DateTimeKind.Utc).AddTicks(2290),
+                            CreatedDate = new DateTime(2024, 10, 11, 23, 54, 37, 409, DateTimeKind.Utc).AddTicks(4697),
                             IsActive = false,
                             Name = "Portakal"
                         },
@@ -386,7 +420,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 2,
                             BrandId = 1,
                             CategoryId = 7,
-                            CreatedDate = new DateTime(2024, 9, 27, 16, 38, 36, 46, DateTimeKind.Utc).AddTicks(2294),
+                            CreatedDate = new DateTime(2024, 10, 11, 23, 54, 37, 409, DateTimeKind.Utc).AddTicks(4701),
                             IsActive = false,
                             Name = "Greyfurt"
                         },
@@ -395,7 +429,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 3,
                             BrandId = 1,
                             CategoryId = 6,
-                            CreatedDate = new DateTime(2024, 9, 27, 16, 38, 36, 46, DateTimeKind.Utc).AddTicks(2295),
+                            CreatedDate = new DateTime(2024, 10, 11, 23, 54, 37, 409, DateTimeKind.Utc).AddTicks(4702),
                             IsActive = false,
                             Name = "Kavun"
                         },
@@ -404,7 +438,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 4,
                             BrandId = 1,
                             CategoryId = 6,
-                            CreatedDate = new DateTime(2024, 9, 27, 16, 38, 36, 46, DateTimeKind.Utc).AddTicks(2296),
+                            CreatedDate = new DateTime(2024, 10, 11, 23, 54, 37, 409, DateTimeKind.Utc).AddTicks(4703),
                             IsActive = false,
                             Name = "Karpuz"
                         },
@@ -413,7 +447,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 5,
                             BrandId = 1,
                             CategoryId = 1,
-                            CreatedDate = new DateTime(2024, 9, 27, 16, 38, 36, 46, DateTimeKind.Utc).AddTicks(2297),
+                            CreatedDate = new DateTime(2024, 10, 11, 23, 54, 37, 409, DateTimeKind.Utc).AddTicks(4704),
                             IsActive = false,
                             Name = "Tarhana"
                         });
@@ -479,6 +513,17 @@ namespace ShoppingList.Persistance.Migrations
                     b.Navigation("ParentCategory");
                 });
 
+            modelBuilder.Entity("ShoppingList.Domain.Entities.Image", b =>
+                {
+                    b.HasOne("ShoppingList.Domain.Entities.Product", "Product")
+                        .WithOne("Image")
+                        .HasForeignKey("ShoppingList.Domain.Entities.Image", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("ShoppingList.Domain.Entities.Product", b =>
                 {
                     b.HasOne("ShoppingList.Domain.Entities.Brand", "Brand")
@@ -508,6 +553,11 @@ namespace ShoppingList.Persistance.Migrations
                     b.Navigation("Products");
 
                     b.Navigation("SubCategories");
+                });
+
+            modelBuilder.Entity("ShoppingList.Domain.Entities.Product", b =>
+                {
+                    b.Navigation("Image");
                 });
 #pragma warning restore 612, 618
         }

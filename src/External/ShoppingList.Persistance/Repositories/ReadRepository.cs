@@ -1,8 +1,7 @@
-using System.Data.Common;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using ShoppingList.Application.Repositories;
+using ShoppingList.Application.Abstractions.Repositories;
 using ShoppingList.Domain.Entities.Common;
 using ShoppingList.Persistance.Context;
 

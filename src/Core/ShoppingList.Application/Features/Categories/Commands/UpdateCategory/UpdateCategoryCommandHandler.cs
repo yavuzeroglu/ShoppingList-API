@@ -1,6 +1,6 @@
 using MediatR;
 using SendGrid.Helpers.Errors.Model;
-using ShoppingList.Application.Repositories.Categories;
+using ShoppingList.Application.Abstractions.Repositories.Categories;
 
 namespace ShoppingList.Application.Features.Categories.Commands.UpdateCategory;
 

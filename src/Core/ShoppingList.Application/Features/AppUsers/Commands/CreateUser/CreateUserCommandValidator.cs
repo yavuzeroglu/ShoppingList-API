@@ -10,6 +10,15 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommandReq
             .NotEmpty()
             .EmailAddress()
             .MinimumLength(8);
+        
+        RuleFor(u => u.Password)
+            .NotEmpty()
+            .Length(5,25);
+
+        RuleFor(u => u.PasswordConfirm)
+            .NotEmpty()
+            .Length(5,25)
+            .Equal(u => u.Password);
             
     }
 }

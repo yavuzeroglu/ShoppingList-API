@@ -8,6 +8,10 @@ using ShoppingList.Application.Abstractions.Services;
 using ShoppingList.Application.Abstractions.Tokens;
 using ShoppingList.Infrastructure.Services;
 using ShoppingList.Infrastructure.Services.Token;
+using ShoppingList.Infrastructure.Services.Storages;
+using ShoppingList.Application.Abstractions.Storage;
+using ShoppingList.Infrastructure.Enums;
+using System.Security.Cryptography;
 
 namespace ShoppingList.Infrastructure;
 
@@ -17,7 +21,22 @@ public static class ServiceRegistration
     {
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IMailService, MailService>();
+        services.AddScoped<ILocalStorage, LocalStorage>();
+        services.AddScoped<IStorageService, StorageService>();
     }
+
+    public static void AddStorage<T>(this IServiceCollection services) where T : class, IStorage
+    {
+        services.AddScoped<IStorage, T>();
+    }
+
+    public static IServiceCollection AddStorage(this IServiceCollection services, StorageType storageType)
+        => storageType switch
+        {
+            StorageType.Local => services.AddScoped<IStorage, LocalStorage>(),
+            StorageType.Azure => services.AddScoped<IStorage, AzureStorage>(),
+            _ => services.AddScoped<IStorage, LocalStorage>()  
+        };
 
     public static void ConfigureIdentity(this IServiceCollection services, IConfiguration configuration)
     {
@@ -42,6 +61,4 @@ public static class ServiceRegistration
                 };
             });
     }
-
-
 }
