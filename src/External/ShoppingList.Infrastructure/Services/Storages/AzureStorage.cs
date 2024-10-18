@@ -13,7 +13,7 @@ public class AzureStorage : IAzureStorage
     BlobContainerClient _blobContainerClient;
     public AzureStorage(IConfiguration configuration)
     {
-        _blobServiceClient = new(configuration["Storage:Azure"]);
+        _blobServiceClient = new(configuration["Storage:Azure:AccessUrl"]);
     }
 
     public async Task DeleteAsync(string containerName, string fileName)
