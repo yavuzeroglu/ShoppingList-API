@@ -1,8 +1,8 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using ShoppingList.Application.Abstractions.Repositories.ProductImage;
-using ShoppingList.Application.Abstractions.Repositories.Products;
-using ShoppingList.Application.Abstractions.Storage;
+using ShoppingList.Application.Common.Abstractions.Repositories.ProductImage;
+using ShoppingList.Application.Common.Abstractions.Repositories.Products;
+using ShoppingList.Application.Common.Abstractions.Storage;
 using ShoppingList.Domain.Entities;
 
 namespace ShoppingList.Application.Features.Images.Commands.DeleteImage;

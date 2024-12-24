@@ -1,5 +1,5 @@
 using MediatR;
-using ShoppingList.Application.Abstractions.Services;
+using ShoppingList.Application.Common.Abstractions.Services;
 
 namespace ShoppingList.Application.Features.AppUsers.Commands.UpdatePassword;
 

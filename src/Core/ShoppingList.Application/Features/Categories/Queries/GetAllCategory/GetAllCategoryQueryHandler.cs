@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using ShoppingList.Application.Abstractions.Repositories.Categories;
+using ShoppingList.Application.Common.Abstractions.Repositories.Categories;
 
 namespace ShoppingList.Application.Features.Categories.Queries.GetAllCategory;
 
@@ -13,7 +13,7 @@ public class GetAllCategoryQueryHandler : IRequestHandler<GetAllCategoryQueryReq
       _categoryReadRepository = categoryReadRepository;
    }
 
-   public async Task<IList<GetAllCategoryQueryResponse>> Handle(GetAllCategoryQueryRequest request, CancellationToken cancellationToken)
+   public Task<IList<GetAllCategoryQueryResponse>> Handle(GetAllCategoryQueryRequest request, CancellationToken cancellationToken)
    {
       var categories = _categoryReadRepository
          .GetAll()
@@ -31,7 +31,7 @@ public class GetAllCategoryQueryHandler : IRequestHandler<GetAllCategoryQueryReq
             SubCategories = category.SubCategories?.Select(sc => sc.Name).ToList()
          });
 
-      return response;
+      return Task.FromResult<IList<GetAllCategoryQueryResponse>>(response);
 
    }
 }

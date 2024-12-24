@@ -1,7 +1,7 @@
 using System.Reflection.Metadata;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using ShoppingList.Application.Abstractions.Services;
+using ShoppingList.Application.Common.Abstractions.Services;
 using ShoppingList.Application.DTOs.Users;
 using ShoppingList.Domain.Entities.Identity;
 

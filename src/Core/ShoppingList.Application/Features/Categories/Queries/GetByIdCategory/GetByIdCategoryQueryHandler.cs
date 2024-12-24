@@ -1,7 +1,7 @@
 using AutoMapper;
 using MediatR;
 using SendGrid.Helpers.Errors.Model;
-using ShoppingList.Application.Abstractions.Repositories.Categories;
+using ShoppingList.Application.Common.Abstractions.Repositories.Categories;
 
 namespace ShoppingList.Application.Features.Categories.Queries.GetByIdCategory;
 

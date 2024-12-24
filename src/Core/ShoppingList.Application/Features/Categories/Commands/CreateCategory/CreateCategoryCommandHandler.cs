@@ -1,6 +1,6 @@
 using AutoMapper;
 using MediatR;
-using ShoppingList.Application.Abstractions.Repositories.Categories;
+using ShoppingList.Application.Common.Abstractions.Repositories.Categories;
 using ShoppingList.Domain.Entities;
 
 namespace ShoppingList.Application.Features.Categories.Commands.CreateCategory;

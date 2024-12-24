@@ -1,7 +1,7 @@
 using MediatR;
-using ShoppingList.Application.Abstractions.Repositories.Products;
+using ShoppingList.Application.Common.Abstractions.Repositories.Products;
 using ShoppingList.Domain.Entities;
-using ShoppingList.Application.Abstractions.Storage;
+using ShoppingList.Application.Common.Abstractions.Storage;
 using AutoMapper;
 
 namespace ShoppingList.Application.Features.Products.Commands.CreateProduct;

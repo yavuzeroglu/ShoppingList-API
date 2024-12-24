@@ -1,5 +1,5 @@
 using MediatR;
-using ShoppingList.Application.Abstractions.Repositories.Brands;
+using ShoppingList.Application.Common.Abstractions.Repositories.Brands;
 using ShoppingList.Domain.Entities;
 
 namespace ShoppingList.Application.Features.Brands.Commands.CreateBrand;
