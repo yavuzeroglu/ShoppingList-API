@@ -8,5 +8,5 @@ public class GetAllProductQueryResponse
    public int BrandId { get; set; }
    public List<string>? Images { get; set; }
    public bool IsActive { get; set; }
-   public string CreatedDate { get; set; }
+   public string CreatedDate { get; set; } = string.Empty;
 }

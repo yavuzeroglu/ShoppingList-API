@@ -1,4 +1,4 @@
-using ShoppingList.Application.Abstractions.Repositories.Products;
+using ShoppingList.Application.Common.Abstractions.Repositories.Products;
 using ShoppingList.Domain.Entities;
 using ShoppingList.Persistance.Context;
 

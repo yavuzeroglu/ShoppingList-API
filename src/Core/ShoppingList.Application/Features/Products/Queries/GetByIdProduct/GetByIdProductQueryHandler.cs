@@ -2,7 +2,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SendGrid.Helpers.Errors.Model;
-using ShoppingList.Application.Abstractions.Repositories.Products;
+using ShoppingList.Application.Common.Abstractions.Repositories.Products;
 
 namespace ShoppingList.Application.Features.Products.Queries.GetByIdProduct;
 

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Http;
-using ShoppingList.Application.Abstractions.Storage;
+using ShoppingList.Application.Common.Abstractions.Storage;
 
 namespace ShoppingList.Infrastructure.Services.Storages;
 

@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Text;
 using Microsoft.Extensions.Configuration;
-using ShoppingList.Application.Abstractions.Services;
+using ShoppingList.Application.Common.Abstractions.Services;
 
 namespace ShoppingList.Infrastructure.Services;
 

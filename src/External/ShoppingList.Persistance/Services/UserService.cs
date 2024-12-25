@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using ShoppingList.Application.Abstractions.Services;
+using ShoppingList.Application.Common.Abstractions.Services;
 using ShoppingList.Application.DTOs.Users;
 using ShoppingList.Application.Helpers;
 using ShoppingList.Domain.Entities.Identity;

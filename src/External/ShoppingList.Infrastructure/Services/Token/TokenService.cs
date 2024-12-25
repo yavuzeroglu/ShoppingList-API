@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using ShoppingList.Application.Abstractions.Tokens;
+using ShoppingList.Application.Common.Abstractions.Tokens;
 using ShoppingList.Application.DTOs;
 using ShoppingList.Domain.Entities.Identity;
 

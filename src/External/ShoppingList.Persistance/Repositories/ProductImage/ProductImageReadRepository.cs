@@ -1,4 +1,4 @@
-using ShoppingList.Application.Abstractions.Repositories.ProductImage;
+using ShoppingList.Application.Common.Abstractions.Repositories.ProductImage;
 using ShoppingList.Domain.Entities;
 using ShoppingList.Persistance.Context;
 

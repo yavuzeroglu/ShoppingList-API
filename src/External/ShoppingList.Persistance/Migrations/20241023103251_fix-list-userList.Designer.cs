@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ShoppingList.Persistance.Context;
@@ -11,9 +12,11 @@ using ShoppingList.Persistance.Context;
 namespace ShoppingList.Persistance.Migrations
 {
     [DbContext(typeof(ShoppingListDbContext))]
-    partial class ShoppingListDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241023103251_fix-list-userList")]
+    partial class fixlistuserList
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,91 +131,6 @@ namespace ShoppingList.Persistance.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ShoppingList.Domain.Entities.Basket", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("CreatedByUserId")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsPurchased")
-                        .HasColumnType("boolean");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedByUserId");
-
-                    b.ToTable("Baskets");
-                });
-
-            modelBuilder.Entity("ShoppingList.Domain.Entities.BasketItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BasketId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("LineTotal")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BasketId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("BasketItems");
-                });
-
-            modelBuilder.Entity("ShoppingList.Domain.Entities.BasketUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AppUserId")
-                        .HasColumnType("text");
-
-                    b.Property<int>("BasketId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("BasketId");
-
-                    b.ToTable("BasketUser");
-                });
-
             modelBuilder.Entity("ShoppingList.Domain.Entities.Brand", b =>
                 {
                     b.Property<int>("Id")
@@ -235,19 +153,19 @@ namespace ShoppingList.Persistance.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(2250),
+                            CreatedDate = new DateTime(2024, 10, 23, 10, 32, 50, 855, DateTimeKind.Utc).AddTicks(7517),
                             Name = "TEST"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(2253),
+                            CreatedDate = new DateTime(2024, 10, 23, 10, 32, 50, 855, DateTimeKind.Utc).AddTicks(7520),
                             Name = "Reyoncunuz"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(2255),
+                            CreatedDate = new DateTime(2024, 10, 23, 10, 32, 50, 855, DateTimeKind.Utc).AddTicks(7521),
                             Name = "ETİ"
                         });
                 });
@@ -452,6 +370,89 @@ namespace ShoppingList.Persistance.Migrations
                     b.ToTable("Images");
                 });
 
+            modelBuilder.Entity("ShoppingList.Domain.Entities.List", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsPurchased")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ListName")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.ToTable("Lists");
+                });
+
+            modelBuilder.Entity("ShoppingList.Domain.Entities.ListLine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("LineTotal")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("ListId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListId");
+
+                    b.ToTable("ListLines");
+                });
+
+            modelBuilder.Entity("ShoppingList.Domain.Entities.ListUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ListId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("ListId");
+
+                    b.ToTable("ListUser");
+                });
+
             modelBuilder.Entity("ShoppingList.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -489,7 +490,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 1,
                             BrandId = 1,
                             CategoryId = 7,
-                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(8434),
+                            CreatedDate = new DateTime(2024, 10, 23, 10, 32, 50, 856, DateTimeKind.Utc).AddTicks(1856),
                             IsActive = false,
                             Name = "Portakal"
                         },
@@ -498,7 +499,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 2,
                             BrandId = 1,
                             CategoryId = 7,
-                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(8439),
+                            CreatedDate = new DateTime(2024, 10, 23, 10, 32, 50, 856, DateTimeKind.Utc).AddTicks(1863),
                             IsActive = false,
                             Name = "Greyfurt"
                         },
@@ -507,7 +508,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 3,
                             BrandId = 1,
                             CategoryId = 6,
-                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(8440),
+                            CreatedDate = new DateTime(2024, 10, 23, 10, 32, 50, 856, DateTimeKind.Utc).AddTicks(1864),
                             IsActive = false,
                             Name = "Kavun"
                         },
@@ -516,7 +517,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 4,
                             BrandId = 1,
                             CategoryId = 6,
-                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(8441),
+                            CreatedDate = new DateTime(2024, 10, 23, 10, 32, 50, 856, DateTimeKind.Utc).AddTicks(1865),
                             IsActive = false,
                             Name = "Karpuz"
                         },
@@ -525,7 +526,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 5,
                             BrandId = 1,
                             CategoryId = 1,
-                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(8442),
+                            CreatedDate = new DateTime(2024, 10, 23, 10, 32, 50, 856, DateTimeKind.Utc).AddTicks(1866),
                             IsActive = false,
                             Name = "Tarhana"
                         });
@@ -582,51 +583,6 @@ namespace ShoppingList.Persistance.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ShoppingList.Domain.Entities.Basket", b =>
-                {
-                    b.HasOne("ShoppingList.Domain.Entities.Identity.AppUser", "CreatedByUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedByUserId");
-
-                    b.Navigation("CreatedByUser");
-                });
-
-            modelBuilder.Entity("ShoppingList.Domain.Entities.BasketItem", b =>
-                {
-                    b.HasOne("ShoppingList.Domain.Entities.Basket", "Basket")
-                        .WithMany("BasketItems")
-                        .HasForeignKey("BasketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ShoppingList.Domain.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Basket");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("ShoppingList.Domain.Entities.BasketUser", b =>
-                {
-                    b.HasOne("ShoppingList.Domain.Entities.Identity.AppUser", "AppUser")
-                        .WithMany("BasketUsers")
-                        .HasForeignKey("AppUserId");
-
-                    b.HasOne("ShoppingList.Domain.Entities.Basket", "Basket")
-                        .WithMany("BasketUsers")
-                        .HasForeignKey("BasketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-
-                    b.Navigation("Basket");
-                });
-
             modelBuilder.Entity("ShoppingList.Domain.Entities.Category", b =>
                 {
                     b.HasOne("ShoppingList.Domain.Entities.Category", "ParentCategory")
@@ -645,6 +601,43 @@ namespace ShoppingList.Persistance.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ShoppingList.Domain.Entities.List", b =>
+                {
+                    b.HasOne("ShoppingList.Domain.Entities.Identity.AppUser", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId");
+
+                    b.Navigation("CreatedByUser");
+                });
+
+            modelBuilder.Entity("ShoppingList.Domain.Entities.ListLine", b =>
+                {
+                    b.HasOne("ShoppingList.Domain.Entities.List", "List")
+                        .WithMany("ListLines")
+                        .HasForeignKey("ListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("List");
+                });
+
+            modelBuilder.Entity("ShoppingList.Domain.Entities.ListUser", b =>
+                {
+                    b.HasOne("ShoppingList.Domain.Entities.Identity.AppUser", "AppUser")
+                        .WithMany("ListUsers")
+                        .HasForeignKey("AppUserId");
+
+                    b.HasOne("ShoppingList.Domain.Entities.List", "List")
+                        .WithMany("ListUsers")
+                        .HasForeignKey("ListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("List");
                 });
 
             modelBuilder.Entity("ShoppingList.Domain.Entities.Product", b =>
@@ -666,13 +659,6 @@ namespace ShoppingList.Persistance.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("ShoppingList.Domain.Entities.Basket", b =>
-                {
-                    b.Navigation("BasketItems");
-
-                    b.Navigation("BasketUsers");
-                });
-
             modelBuilder.Entity("ShoppingList.Domain.Entities.Brand", b =>
                 {
                     b.Navigation("Products");
@@ -687,7 +673,14 @@ namespace ShoppingList.Persistance.Migrations
 
             modelBuilder.Entity("ShoppingList.Domain.Entities.Identity.AppUser", b =>
                 {
-                    b.Navigation("BasketUsers");
+                    b.Navigation("ListUsers");
+                });
+
+            modelBuilder.Entity("ShoppingList.Domain.Entities.List", b =>
+                {
+                    b.Navigation("ListLines");
+
+                    b.Navigation("ListUsers");
                 });
 
             modelBuilder.Entity("ShoppingList.Domain.Entities.Product", b =>
