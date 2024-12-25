@@ -128,6 +128,91 @@ namespace ShoppingList.Persistance.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ShoppingList.Domain.Entities.Basket", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsPurchased")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.ToTable("Baskets");
+                });
+
+            modelBuilder.Entity("ShoppingList.Domain.Entities.BasketItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BasketId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("LineTotal")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BasketId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("BasketItems");
+                });
+
+            modelBuilder.Entity("ShoppingList.Domain.Entities.BasketUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("BasketId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("BasketId");
+
+                    b.ToTable("BasketUser");
+                });
+
             modelBuilder.Entity("ShoppingList.Domain.Entities.Brand", b =>
                 {
                     b.Property<int>("Id")
@@ -144,25 +229,25 @@ namespace ShoppingList.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(908),
+                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(2250),
                             Name = "TEST"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(911),
+                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(2253),
                             Name = "Reyoncunuz"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(913),
+                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(2255),
                             Name = "ETİ"
                         });
                 });
@@ -185,7 +270,7 @@ namespace ShoppingList.Persistance.Migrations
 
                     b.HasIndex("ParentCategoryId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
 
                     b.HasData(
                         new
@@ -364,7 +449,7 @@ namespace ShoppingList.Persistance.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Images", (string)null);
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("ShoppingList.Domain.Entities.Product", b =>
@@ -396,7 +481,7 @@ namespace ShoppingList.Persistance.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
 
                     b.HasData(
                         new
@@ -404,7 +489,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 1,
                             BrandId = 1,
                             CategoryId = 7,
-                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(5807),
+                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(8434),
                             IsActive = false,
                             Name = "Portakal"
                         },
@@ -413,7 +498,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 2,
                             BrandId = 1,
                             CategoryId = 7,
-                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(5811),
+                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(8439),
                             IsActive = false,
                             Name = "Greyfurt"
                         },
@@ -422,7 +507,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 3,
                             BrandId = 1,
                             CategoryId = 6,
-                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(5812),
+                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(8440),
                             IsActive = false,
                             Name = "Kavun"
                         },
@@ -431,7 +516,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 4,
                             BrandId = 1,
                             CategoryId = 6,
-                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(5813),
+                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(8441),
                             IsActive = false,
                             Name = "Karpuz"
                         },
@@ -440,7 +525,7 @@ namespace ShoppingList.Persistance.Migrations
                             Id = 5,
                             BrandId = 1,
                             CategoryId = 1,
-                            CreatedDate = new DateTime(2024, 10, 12, 15, 38, 1, 497, DateTimeKind.Utc).AddTicks(5814),
+                            CreatedDate = new DateTime(2024, 10, 25, 14, 51, 34, 426, DateTimeKind.Utc).AddTicks(8442),
                             IsActive = false,
                             Name = "Tarhana"
                         });
@@ -497,6 +582,51 @@ namespace ShoppingList.Persistance.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ShoppingList.Domain.Entities.Basket", b =>
+                {
+                    b.HasOne("ShoppingList.Domain.Entities.Identity.AppUser", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId");
+
+                    b.Navigation("CreatedByUser");
+                });
+
+            modelBuilder.Entity("ShoppingList.Domain.Entities.BasketItem", b =>
+                {
+                    b.HasOne("ShoppingList.Domain.Entities.Basket", "Basket")
+                        .WithMany("BasketItems")
+                        .HasForeignKey("BasketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ShoppingList.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Basket");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ShoppingList.Domain.Entities.BasketUser", b =>
+                {
+                    b.HasOne("ShoppingList.Domain.Entities.Identity.AppUser", "AppUser")
+                        .WithMany("BasketUsers")
+                        .HasForeignKey("AppUserId");
+
+                    b.HasOne("ShoppingList.Domain.Entities.Basket", "Basket")
+                        .WithMany("BasketUsers")
+                        .HasForeignKey("BasketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Basket");
+                });
+
             modelBuilder.Entity("ShoppingList.Domain.Entities.Category", b =>
                 {
                     b.HasOne("ShoppingList.Domain.Entities.Category", "ParentCategory")
@@ -509,7 +639,7 @@ namespace ShoppingList.Persistance.Migrations
             modelBuilder.Entity("ShoppingList.Domain.Entities.Image", b =>
                 {
                     b.HasOne("ShoppingList.Domain.Entities.Product", "Product")
-                        .WithMany()
+                        .WithMany("Images")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -536,6 +666,13 @@ namespace ShoppingList.Persistance.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("ShoppingList.Domain.Entities.Basket", b =>
+                {
+                    b.Navigation("BasketItems");
+
+                    b.Navigation("BasketUsers");
+                });
+
             modelBuilder.Entity("ShoppingList.Domain.Entities.Brand", b =>
                 {
                     b.Navigation("Products");
@@ -546,6 +683,16 @@ namespace ShoppingList.Persistance.Migrations
                     b.Navigation("Products");
 
                     b.Navigation("SubCategories");
+                });
+
+            modelBuilder.Entity("ShoppingList.Domain.Entities.Identity.AppUser", b =>
+                {
+                    b.Navigation("BasketUsers");
+                });
+
+            modelBuilder.Entity("ShoppingList.Domain.Entities.Product", b =>
+                {
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

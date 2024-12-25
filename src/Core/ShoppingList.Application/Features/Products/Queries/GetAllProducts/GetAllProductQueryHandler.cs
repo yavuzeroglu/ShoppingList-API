@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using ShoppingList.Application.Abstractions.Repositories.ProductImage;
-using ShoppingList.Application.Abstractions.Repositories.Products;
+using ShoppingList.Application.Common.Abstractions.Repositories.ProductImage;
+using ShoppingList.Application.Common.Abstractions.Repositories.Products;
 
 namespace ShoppingList.Application.Features.Products.Queries.GetAllProducts;
 public class GetAllProductQueryHandler : IRequestHandler<GetAllProductQueryRequest, IList<GetAllProductQueryResponse>>

@@ -2,16 +2,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ShoppingList.Application.Abstractions.Repositories.Brands;
-using ShoppingList.Application.Abstractions.Repositories.Categories;
-using ShoppingList.Application.Abstractions.Repositories.ProductImage;
-using ShoppingList.Application.Abstractions.Repositories.Products;
-using ShoppingList.Application.Abstractions.Services;
+using ShoppingList.Application.Common.Abstractions.Repositories.BasketItems;
+using ShoppingList.Application.Common.Abstractions.Repositories.Baskets;
+using ShoppingList.Application.Common.Abstractions.Repositories.Brands;
+using ShoppingList.Application.Common.Abstractions.Repositories.Categories;
+using ShoppingList.Application.Common.Abstractions.Repositories.ProductImage;
+using ShoppingList.Application.Common.Abstractions.Repositories.Products;
+using ShoppingList.Application.Common.Abstractions.Services;
 using ShoppingList.Domain.Entities.Identity;
 using ShoppingList.Persistance.Context;
+using ShoppingList.Persistance.Repositories.BasketLines;
+using ShoppingList.Persistance.Repositories.Baskets;
 using ShoppingList.Persistance.Repositories.Brands;
 using ShoppingList.Persistance.Repositories.Categories;
-using ShoppingList.Persistance.Repositories.ProductImage;
+using ShoppingList.Persistance.Repositories.ProductImage;   
 using ShoppingList.Persistance.Repositories.Products;
 using ShoppingList.Persistance.Services;
 
@@ -36,7 +40,6 @@ public static class ServiceRegistration
          .AddRoles<AppRole>()
          .AddEntityFrameworkStores<ShoppingListDbContext>()
          .AddDefaultTokenProviders();
-
    }
 
    public static void ConfigureRepositoryManager(this IServiceCollection services)
@@ -52,11 +55,18 @@ public static class ServiceRegistration
 
       services.AddScoped<IProductImageReadRepository, ProductImageReadRepository>();
       services.AddScoped<IProductImageWriteRepository, ProductImageWriteRepository>();
+
+      services.AddScoped<IBasketWriteRepository, BasketWriteRepository>();
+      services.AddScoped<IBasketReadRepository, BasketReadRepository>();
+
+      services.AddScoped<IBasketItemWriteRepository, BasketItemWriteRepository>();
+      services.AddScoped<IBasketItemReadRepository, BasketItemReadRepository>();
    }
 
    public static void ConfigureServiceManager(this IServiceCollection services)
    {
       services.AddScoped<IUserService, UserService>();
       services.AddScoped<IAuthService, AuthService>();
+      services.AddScoped<IBasketService, BasketService>();
    }
 }

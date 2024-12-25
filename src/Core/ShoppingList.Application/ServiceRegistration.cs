@@ -2,9 +2,8 @@ using System.Reflection;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using ShoppingList.Application.Behaviors;
+using ShoppingList.Application.Common.Behaviors;
 using ShoppingList.Application.Exceptions;
-using ShoppingList.Application.Features.Products.Commands.CreateProduct;
 
 namespace ShoppingList.Application;
 

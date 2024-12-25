@@ -1,7 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using ShoppingList.Application.Abstractions.Storage;
+using ShoppingList.Application.Common.Abstractions.Storage;
 using ShoppingList.Infrastructure.Helpers;
 
 namespace ShoppingList.Infrastructure.Services.Storages;

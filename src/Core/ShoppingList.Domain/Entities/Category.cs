@@ -4,7 +4,7 @@ namespace ShoppingList.Domain.Entities;
 
 public class Category : BaseEntity
 {
-   public string Name { get; set; }
+   public string Name { get; set; } = string.Empty;
    public int? ParentCategoryId { get; set; }
 
    public Category? ParentCategory { get; set; }

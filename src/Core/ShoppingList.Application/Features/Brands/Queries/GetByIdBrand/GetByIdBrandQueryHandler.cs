@@ -2,7 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SendGrid.Helpers.Errors.Model;
-using ShoppingList.Application.Abstractions.Repositories.Brands;
+using ShoppingList.Application.Common.Abstractions.Repositories.Brands;
 
 namespace ShoppingList.Application.Features.Brands.Queries.GetByIdBrand;
 

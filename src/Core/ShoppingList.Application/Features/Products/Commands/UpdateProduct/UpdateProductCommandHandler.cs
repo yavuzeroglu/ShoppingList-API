@@ -1,7 +1,7 @@
 using AutoMapper;
 using MediatR;
 using SendGrid.Helpers.Errors.Model;
-using ShoppingList.Application.Abstractions.Repositories.Products;
+using ShoppingList.Application.Common.Abstractions.Repositories.Products;
 using ShoppingList.Domain.Entities;
 
 namespace ShoppingList.Application.Features.Products.Commands.UpdateProduct;

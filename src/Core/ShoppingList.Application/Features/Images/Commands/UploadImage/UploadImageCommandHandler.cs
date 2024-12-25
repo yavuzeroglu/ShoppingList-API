@@ -1,6 +1,6 @@
 using MediatR;
-using ShoppingList.Application.Abstractions.Repositories.ProductImage;
-using ShoppingList.Application.Abstractions.Storage;
+using ShoppingList.Application.Common.Abstractions.Repositories.ProductImage;
+using ShoppingList.Application.Common.Abstractions.Storage;
 using ShoppingList.Domain.Entities;
 
 namespace ShoppingList.Application.Features.Images.Commands.UploadImage;

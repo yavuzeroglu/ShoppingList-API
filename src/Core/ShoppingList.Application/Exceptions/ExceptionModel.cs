@@ -4,7 +4,7 @@ namespace ShoppingList.Application.Exceptions;
 
 public class ExceptionModel : ErrorStatusCode
 {
-   public IEnumerable<string> Errors { get; set; }
+   public IEnumerable<string> Errors { get; set; } = [];
 
    public override string ToString()
      => JsonConvert.SerializeObject(this);

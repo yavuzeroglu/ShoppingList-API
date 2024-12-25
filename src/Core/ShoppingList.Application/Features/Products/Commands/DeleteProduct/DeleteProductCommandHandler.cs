@@ -1,6 +1,6 @@
 using MediatR;
 using SendGrid.Helpers.Errors.Model;
-using ShoppingList.Application.Abstractions.Repositories.Products;
+using ShoppingList.Application.Common.Abstractions.Repositories.Products;
 
 namespace ShoppingList.Application.Features.Products.Commands.DeleteProduct;
 

@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using ShoppingList.Application.Abstractions.Services;
-using ShoppingList.Application.Abstractions.Tokens;
+using ShoppingList.Application.Common.Abstractions.Services;
+using ShoppingList.Application.Common.Abstractions.Tokens;
 using ShoppingList.Infrastructure.Services;
 using ShoppingList.Infrastructure.Services.Token;
 using ShoppingList.Infrastructure.Services.Storages;
-using ShoppingList.Application.Abstractions.Storage;
+using ShoppingList.Application.Common.Abstractions.Storage;
 using ShoppingList.Infrastructure.Enums;
 using System.Security.Cryptography;
 

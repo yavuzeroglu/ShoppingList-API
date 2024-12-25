@@ -2,7 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ShoppingList.Application.Abstractions.Repositories.Categories;
+using ShoppingList.Application.Common.Abstractions.Repositories.Categories;
 using ShoppingList.Application.DTOs.Categories;
 using ShoppingList.Application.Features.Categories.Commands.CreateCategory;
 using ShoppingList.Application.Features.Categories.Commands.DeleteCategory;
@@ -13,17 +13,16 @@ using ShoppingList.Application.Features.Categories.Queries.GetByIdCategory;
 
 namespace ShoppingList.WebAPI.Controllers;
 
-[Route("api/Categories")]
+
 public class CategoryController : BaseApiController
 {
-   private readonly ICategoryReadRepository _categoryReadRepository;   
+   private readonly ICategoryReadRepository _categoryReadRepository;
    private readonly IMapper _mapper;
-   private readonly IMediator _mediator;
 
-   public CategoryController(IMapper mapper, IMediator mediator)
+   public CategoryController(IMapper mapper, IMediator mediator, ICategoryReadRepository categoryReadRepository) : base(mediator)
    {
       _mapper = mapper;
-      _mediator = mediator;
+      _categoryReadRepository = categoryReadRepository;
    }
 
 
@@ -34,7 +33,7 @@ public class CategoryController : BaseApiController
       return Ok(response);
    }
 
-   [HttpGet("GetDetails")]
+   [HttpGet]
    public IActionResult GetDetails()
    {
       var categories = _categoryReadRepository
@@ -72,7 +71,7 @@ public class CategoryController : BaseApiController
    }
 
    [HttpDelete]
-   public async Task<ActionResult> Remove (DeleteCategoryCommandRequest request)
+   public async Task<ActionResult> Remove(DeleteCategoryCommandRequest request)
    {
       await _mediator.Send(request);
       return NoContent();

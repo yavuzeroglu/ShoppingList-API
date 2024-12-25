@@ -2,7 +2,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using ShoppingList.Application.Abstractions.Storage;
+using ShoppingList.Application.Common.Abstractions.Storage;
 using ShoppingList.Infrastructure.Helpers;
 
 namespace ShoppingList.Infrastructure.Services.Storages;

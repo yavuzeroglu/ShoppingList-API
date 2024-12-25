@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using ShoppingList.Application.Abstractions.Repositories.Brands;
+using ShoppingList.Application.Common.Abstractions.Repositories.Brands;
 
 namespace ShoppingList.Application.Features.Brands.Queries.GetAllBrand;
 
@@ -13,7 +13,7 @@ public class GetAllBrandQueryHandler : IRequestHandler<GetAllBrandQueryRequest, 
         _brandReadRepository = brandReadRepository;
     }
 
-    public async Task<IList<GetAllBrandQueryResponse>> Handle(GetAllBrandQueryRequest request, CancellationToken cancellationToken)
+    public Task<IList<GetAllBrandQueryResponse>> Handle(GetAllBrandQueryRequest request, CancellationToken cancellationToken)
     {
         var brands = _brandReadRepository
          .GetAll()
@@ -30,6 +30,6 @@ public class GetAllBrandQueryHandler : IRequestHandler<GetAllBrandQueryRequest, 
                 Products = br.Products?.Select(p => p.Name).ToList()
             });
 
-        return response;
+        return Task.FromResult<IList<GetAllBrandQueryResponse>>(response);
     }
 }

@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using ShoppingList.Application.Abstractions.Repositories;
+using ShoppingList.Application.Common.Abstractions.Repositories;
 using ShoppingList.Domain.Entities.Common;
 using ShoppingList.Persistance.Context;
 
@@ -30,9 +30,11 @@ public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
         return query;
     }
 
-    public IQueryable<T> GetWhere(Expression<Func<T, bool>> expression, bool tracking = true)
+    public IQueryable<T> GetWhere(Expression<Func<T, bool>> expression, Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null, bool tracking = true)
     {
         var query = Table.Where(expression);
+        if (include is not null)
+            query = include(query);
         if (!tracking)
             query = query.AsNoTracking();
 
@@ -52,7 +54,7 @@ public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
         var query = Table.AsQueryable();
         if (include is not null)
             query = include(query);
-            
+
         if (!tracking)
             query = query.AsNoTracking();
 
@@ -66,4 +68,10 @@ public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
             query = query.AsNoTracking();
         return await query.FirstOrDefaultAsync(data => data.Id.Equals(Guid.Parse(id)));
     }
+
+    public Task<bool> AnyAsync(Expression<Func<T, bool>> expression)
+    {
+        return Table.AnyAsync(expression);
+    }
+
 }
