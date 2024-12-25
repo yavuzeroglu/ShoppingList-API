@@ -1,22 +1,14 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using ShoppingList.Application.Abstractions.Services;
 using ShoppingList.Application.Features.AppUsers.Commands.CreateUser;
-using ShoppingList.Application.Features.AppUsers.Commands.LoginUser;
 using ShoppingList.Application.Features.AppUsers.Commands.UpdatePassword;
 
 namespace ShoppingList.WebAPI.Controllers;
 
 public class UserController : BaseApiController
 {
-    readonly IMediator _mediator;
-    private readonly IMailService _mailService;
-
-    public UserController(IMediator mediator, IMailService mailService)
+    public UserController(IMediator mediator) : base(mediator)
     {
-        _mediator = mediator;
-        _mailService = mailService;
-
     }
 
     [HttpPost]
@@ -26,7 +18,7 @@ public class UserController : BaseApiController
         return Ok(response);
     }
 
-    [HttpPost("[action]")]
+    [HttpPost]
     public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordCommandRequest request)
     {
         await _mediator.Send(request);

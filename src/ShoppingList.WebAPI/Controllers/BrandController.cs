@@ -10,12 +10,8 @@ namespace ShoppingList.WebAPI.Controllers;
 
 public class BrandController : BaseApiController
 {
-
-   private readonly IMediator _mediator;
-
-   public BrandController(IMediator mediator)
+   public BrandController(IMediator mediator) : base(mediator)
    {
-      _mediator = mediator;
    }
 
 
@@ -26,7 +22,7 @@ public class BrandController : BaseApiController
       return Ok(response);
    }
 
-   [HttpGet("{Id}", Name = "GetBrandsById")]
+   [HttpGet("{Id}")]
    public async Task<IActionResult> GetById([FromRoute] GetByIdBrandQueryRequest request)
    {
       var response = await _mediator.Send(request);
