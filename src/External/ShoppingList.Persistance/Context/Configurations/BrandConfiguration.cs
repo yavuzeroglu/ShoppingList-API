@@ -12,12 +12,5 @@ public class BrandConfiguration : IEntityTypeConfiguration<Brand>
          .WithOne(p => p.Brand)
          .HasForeignKey(p => p.BrandId)
          .OnDelete(DeleteBehavior.Restrict);
-        // DeleteBehavior.Cascade : Bir Brand silindiginde, ilişkili tüm Product kayitlari silinir.
-
-        builder.HasData(
-           new Brand() { Id = 1, CreatedDate = DateTime.UtcNow, Name = "TEST", },
-           new Brand() { Id = 2, CreatedDate = DateTime.UtcNow, Name = "Reyoncunuz" },
-           new Brand() { Id = 3, CreatedDate = DateTime.UtcNow, Name = "ETİ" }
-        );
     }
 }

@@ -19,8 +19,7 @@ public class AddItemToBasketCommandHandler : IRequestHandler<AddItemToBasketComm
         await _basketService.AddItemToBasketAsync(
             request.BasketId,
             request.ProductId,
-            request.Quantity,
-            request.UnitPrice);
+            request.Quantity);
 
         return new AddItemToBasketCommandResponse()
         {

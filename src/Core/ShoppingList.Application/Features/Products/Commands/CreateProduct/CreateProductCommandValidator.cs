@@ -17,7 +17,6 @@ public class CreateProductCommandValidator : AbstractValidator<CreateProductComm
          .WithName("Ürün Adı")
             .WithMessage("Ürün 2 ile 150 olmalı.");
 
-
       RuleFor(p => p.BrandId)
          .GreaterThan(0)
             .WithMessage("Lütfen bir marka seçiniz");
@@ -25,6 +24,32 @@ public class CreateProductCommandValidator : AbstractValidator<CreateProductComm
       RuleFor(p => p.CategoryId)
          .GreaterThan(0)
             .WithMessage("Lütfen bir kategori seçiniz");
+
+      RuleFor(p => p.Unit)
+         .NotEmpty().NotNull()
+            .WithName("Birim")
+            .WithMessage("Lütfen ürün birimini boş bırakmayınız");
+
+      RuleFor(p => p.Unit)
+         .MinimumLength(1).MaximumLength(20)
+            .WithName("Birim")
+            .WithMessage("Birim 1 ile 20 karakter arasında olmalıdır");
+
+      RuleFor(p => p.EstimatedPrice)
+         .NotEmpty().NotNull()
+            .WithName("Tahmini Fiyat")
+            .WithMessage("Lütfen tahmini fiyatı boş bırakmayınız");
+
+      RuleFor(x => x.EstimatedPrice)
+         .GreaterThan(0)
+            .WithMessage("Tahmini fiyat 0'dan büyük olmalıdır")
+         .PrecisionScale(18, 2, false)
+            .WithMessage("Tahmini fiyat en fazla 2 ondalık basamak içerebilir.");
+
+
+      RuleFor(x => x)
+            .Must(x => x.EstimatedPrice <= 500000)
+            .WithMessage("Tahmini fiyat 500.000'dan büyük olamaz.");
 
       RuleFor(p => p.CreatedDate)
          .Custom((createdDate, context) =>

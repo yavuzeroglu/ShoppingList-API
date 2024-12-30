@@ -6,5 +6,4 @@ public sealed record UpdateQuantityBasketItemCommandRequest : IRequest<UpdateQua
 {
     public int BasketItemId { get; init; }
     public int Quantity { get; init; }
-    public decimal UnitPrice { get; init; }
 }

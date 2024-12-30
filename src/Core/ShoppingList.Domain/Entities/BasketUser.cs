@@ -14,7 +14,7 @@ public class BasketUser : BaseEntity
   public int BasketId { get; set; }
   public string AppUserId { get; set; } = string.Empty;
   
-
+  // Navigation Properties
   public Basket Basket { get; set; }
   public AppUser AppUser { get; set; }
 }

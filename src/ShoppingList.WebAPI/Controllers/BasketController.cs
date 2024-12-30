@@ -6,6 +6,7 @@ using ShoppingList.Application.Features.Baskets.Commands.ADdItemToBasket;
 using ShoppingList.Application.Features.Baskets.Commands.CreateBasket;
 using ShoppingList.Application.Features.Baskets.Commands.RemoveBasket;
 using ShoppingList.Application.Features.Baskets.Commands.RemoveBasketItem;
+using ShoppingList.Application.Features.Baskets.Commands.SwitchPurchaseBasketItem;
 using ShoppingList.Application.Features.Baskets.Commands.UpdateQuantityBasketItem;
 using ShoppingList.Application.Features.Baskets.Queries.GetAllBasket;
 using ShoppingList.Application.Features.Baskets.Queries.GetByIdBasket;
@@ -17,8 +18,7 @@ namespace ShoppingList.WebAPI.Controllers;
 public class BasketController : BaseApiController
 {
   public BasketController(IMediator mediator) : base(mediator)
-  {
-  }
+  { }
 
   [HttpGet]
   public async Task<IActionResult> GetBaskets()
@@ -67,6 +67,13 @@ public class BasketController : BaseApiController
   {
     RemoveBasketCommandResponse response = await _mediator.Send(request);
     return Ok(response);
+  }
+
+  [HttpPost]
+  public async Task<IActionResult> SwitchPurchaseBasketItem(SwitchPurchaseBasketItemCommandRequest request)
+  {
+    await _mediator.Send(request);
+    return Ok();
   }
 
 }

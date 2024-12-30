@@ -16,11 +16,6 @@ public class RemoveBasketCommandValidator : AbstractValidator<RemoveBasketComman
             .WithMessage("Sepet ID'si boş olamaz.")
             .GreaterThan(0)
             .WithMessage("Geçersiz sepet ID'si.")
-            // .MustAsync(async (id, cancellation) =>
-            // {
-            //     return await _basketService.IsBasketExistAsync(id);
-            // })
-            .WithMessage("Belirtilen sepet bulunamadı.")
             .MustAsync(async (id, cancellation) =>
             {
                 return await _basketService.IsBasketEmptyAsync(id);

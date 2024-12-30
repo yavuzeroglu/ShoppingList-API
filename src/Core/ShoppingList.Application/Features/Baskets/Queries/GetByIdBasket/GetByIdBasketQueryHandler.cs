@@ -21,11 +21,11 @@ public class GetByIdBasketQueryHandler : IRequestHandler<GetByIdBasketQueryReque
         {
             Id = basket.Id,
             CreatedByUserId = basket.CreatedByUserId,
-            Name = basket.BasketName,
+            Name = basket.Name,
             IsPurchased = basket.IsPurchased,
             TotalAmount = basket.TotalAmount,
             CreatedDate = basket.CreatedDate,
-            UpdatedDate = basket.UpdatedDate,
+            UpdatedDate = basket.ModifiedDate,
             Items = basket.BasketItems.Select(x => new BasketItemViewModel()
             {
                 Id = x.Id,
