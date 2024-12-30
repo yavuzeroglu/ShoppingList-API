@@ -18,8 +18,6 @@ public class UploadImageCommandHandler : IRequestHandler<UploadImageCommandReque
 
   public async Task<Unit> Handle(UploadImageCommandRequest request, CancellationToken cancellationToken)
   {
-    // TODO: check product
-
     (string path, string fileName) = await _storageService.UploadAsync("images", request.Photo);
     var image = new Image()
     {

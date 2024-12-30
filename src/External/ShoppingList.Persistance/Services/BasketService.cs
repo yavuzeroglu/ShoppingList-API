@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SendGrid.Helpers.Errors.Model;
 using ShoppingList.Application.Common.Abstractions.Repositories.BasketItems;
 using ShoppingList.Application.Common.Abstractions.Repositories.Baskets;
+using ShoppingList.Application.Common.Abstractions.Repositories.Products;
 using ShoppingList.Application.Common.Abstractions.Services;
 using ShoppingList.Application.DTOs.Baskets;
 using ShoppingList.Domain.Entities;
@@ -22,10 +23,11 @@ public class BasketService : IBasketService
     private readonly IBasketWriteRepository _basketWriteRepository;
     private readonly IBasketItemReadRepository _basketItemReadRepository;
     private readonly IBasketItemWriteRepository _basketItemWriteRepository;
+    private readonly IProductReadRepository _productReadRepository;
     private readonly ShoppingListDbContext _context;
     private readonly IMapper _mapper;
 
-    public BasketService(IHttpContextAccessor httpContextAccessor, UserManager<AppUser> userManager, IBasketReadRepository basketReadRepository, IBasketWriteRepository basketWriteRepository, IBasketItemReadRepository basketItemReadRepository, IBasketItemWriteRepository basketItemWriteRepository, IMapper mapper, ShoppingListDbContext context)
+    public BasketService(IHttpContextAccessor httpContextAccessor, UserManager<AppUser> userManager, IBasketReadRepository basketReadRepository, IBasketWriteRepository basketWriteRepository, IBasketItemReadRepository basketItemReadRepository, IBasketItemWriteRepository basketItemWriteRepository, IMapper mapper, ShoppingListDbContext context, IProductReadRepository productReadRepository)
     {
         _httpContextAccessor = httpContextAccessor;
         _userManager = userManager;
@@ -35,6 +37,8 @@ public class BasketService : IBasketService
         _basketItemWriteRepository = basketItemWriteRepository;
         _mapper = mapper;
         _context = context;
+        _productReadRepository = productReadRepository;
+
     }
 
     // Commands
@@ -44,19 +48,19 @@ public class BasketService : IBasketService
 
         Basket basket = new()
         {
-            CreatedByUserId = user?.Id,
-            BasketName = BasketName,
+            CreatedByUserId = user.Id, 
+            Name = BasketName,
             IsPurchased = false,
             TotalAmount = 0,
             CreatedDate = DateTime.UtcNow
         };
-
+        
         await _basketWriteRepository.AddAsync(basket);
         await _basketWriteRepository.SaveAsync();
 
     }
 
-    public async Task AddItemToBasketAsync(int basketId, int productId, int quantity, decimal unitPrice)
+    public async Task AddItemToBasketAsync(int basketId, int productId, int quantity)
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
@@ -65,19 +69,20 @@ public class BasketService : IBasketService
             Basket basket = await _basketReadRepository
                 .GetSingleAsync(x => x.Id == basketId && x.CreatedByUserId == user.Id,
                                 x => x.Include(b => b.BasketItems).ThenInclude(bi => bi.Product))
-               ?? throw new NotFoundException("Basket Not Found");
+                ?? throw new NotFoundException("Basket Not Found");
 
+            Product product = await _productReadRepository.GetByIdAsync(productId)
+                ?? throw new NotFoundException("Product Not Found");
             BasketItem? basketItem = basket
                                 .BasketItems
                                 .FirstOrDefault(x => x.ProductId == productId);
             if (basketItem is not null)
             {
                 basketItem.Quantity += quantity;
-                basketItem.LineTotal = basketItem.Quantity * unitPrice;
+                basketItem.LineTotal = basketItem.Quantity * product.EstimatedPrice;
                 UpdateQuantityDTO updateQuantityDTO = new()
                 {
                     Quantity = basketItem.Quantity,
-                    UnitPrice = unitPrice
                 };
                 await UpdateQuantityBasketItemAsync(basketItem.Id, updateQuantityDTO);
 
@@ -90,7 +95,7 @@ public class BasketService : IBasketService
                     BasketId = basketId,
                     ProductId = productId,
                     Quantity = quantity,
-                    LineTotal = quantity * unitPrice
+                    LineTotal = quantity * product.EstimatedPrice
                 };
 
                 await _basketItemWriteRepository.AddAsync(newBasketItem);
@@ -126,7 +131,7 @@ public class BasketService : IBasketService
 
         basket.TotalAmount -= basketItem.LineTotal;
         basketItem.Quantity = dto.Quantity;
-        basketItem.LineTotal = dto.Quantity * dto.UnitPrice;
+        basketItem.LineTotal = dto.Quantity * basketItem.Product.EstimatedPrice;
         basket.TotalAmount += basketItem.LineTotal;
         await _basketWriteRepository.SaveAsync();
     }
@@ -148,11 +153,11 @@ public class BasketService : IBasketService
     public async Task DuplicateBasketAsync(int basketId, string newBasketName)
     {
         var sourceBasket = await GetBasketByIdAsync(basketId);
-        
+
         Basket newBasket = new()
         {
             CreatedByUserId = sourceBasket.CreatedByUserId,
-            BasketName = newBasketName,
+            Name = newBasketName,
             IsPurchased = false,
             TotalAmount = 0,
             CreatedDate = DateTime.UtcNow
@@ -166,10 +171,20 @@ public class BasketService : IBasketService
             await AddItemToBasketAsync(
                 newBasket.Id,
                 item.ProductId,
-                item.Quantity,
-                item.LineTotal / item.Quantity // Birim fiyatı hesapla
+                item.Quantity
             );
         }
+    }
+
+    public async Task SwitchPurchaseBasketItemAsync(int basketItemId)
+    {
+        BasketItem basketItem = await _basketItemReadRepository.GetByIdAsync(basketItemId)
+            ?? throw new NotFoundException("Basket Item Not Found");
+
+        basketItem.IsPurchased = basketItem.IsPurchased == true ? false : true;
+
+        bool result = _basketItemWriteRepository.Update(basketItem);
+        await _basketItemWriteRepository.SaveAsync();
     }
 
     // Queries
@@ -183,7 +198,7 @@ public class BasketService : IBasketService
             {
                 Id = b.Id,
                 CreatedByUserId = b.CreatedByUserId,
-                BasketName = b.BasketName,
+                Name = b.Name,
                 IsPurchased = b.IsPurchased,
                 TotalAmount = b.BasketItems.Sum(bi => bi.LineTotal),
                 BasketItems = b.BasketItems.Select(bi => new BasketItem
@@ -191,6 +206,8 @@ public class BasketService : IBasketService
                     Id = bi.Id,
                     ProductId = bi.ProductId,
                     Product = bi.Product,
+                    IsPurchased = bi.IsPurchased,
+                    IsDeleted = bi.IsDeleted,
                     Quantity = bi.Quantity,
                     LineTotal = bi.LineTotal
                 }).ToList()
@@ -238,7 +255,7 @@ public class BasketService : IBasketService
     public async Task<int> GetTotalBasketCountAsync()
     {
         AppUser? user = await IsUserExistsAsync();
-        
+
         return await _basketReadRepository
             .GetWhere(x => x.CreatedByUserId.Equals(user.Id))
             .CountAsync();

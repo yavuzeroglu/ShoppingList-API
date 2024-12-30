@@ -24,7 +24,7 @@ namespace ShoppingList.Application.Features.Baskets.Commands.CreateBasket;
             {
                 // Aynı kullanıcının aynı isimde sepeti var mı kontrolü
                 bool exists = await _basketReadRepository
-                    .AnyAsync(b => b.BasketName == name && !b.IsPurchased);
+                    .AnyAsync(b => b.Name == name && !b.IsPurchased);
                 return !exists;
             })
             .WithMessage("Bu isimde aktif bir sepetiniz zaten var.");

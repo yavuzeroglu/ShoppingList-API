@@ -29,18 +29,5 @@ public class UpdateQuantityBasketItemCommandValidator : AbstractValidator<Update
             .WithMessage("Miktar 0'dan büyük olmalıdır.")
             .LessThanOrEqualTo(100)
             .WithMessage("Miktar 100'den fazla olamaz.");
-
-        RuleFor(x => x.UnitPrice)
-            .NotEmpty()
-            .WithMessage("Birim fiyat boş olamaz.")
-            .GreaterThan(0)
-            .WithMessage("Birim fiyat 0'dan büyük olmalıdır.")
-            .PrecisionScale(18, 2, false)
-            .WithMessage("Birim fiyat en fazla 2 ondalık basamak içerebilir.");
-
-        // Kompleks kural
-        RuleFor(x => x)
-            .Must(x => x.UnitPrice * x.Quantity <= 1000000)
-            .WithMessage("Toplam tutar 1.000.000'dan büyük olamaz.");
     }
 }

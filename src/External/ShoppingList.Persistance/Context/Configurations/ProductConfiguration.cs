@@ -18,13 +18,5 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .WithMany(b => b.Products)
             .HasForeignKey(i => i.BrandId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasData(
-            new Product() { Id = 1, Name = "Portakal", CategoryId = 7, BrandId = 1 },
-            new Product() { Id = 2, Name = "Greyfurt", CategoryId = 7, BrandId = 1 },
-            new Product() { Id = 3, Name = "Kavun", CategoryId = 6, BrandId = 1 },
-            new Product() { Id = 4, Name = "Karpuz", CategoryId = 6, BrandId = 1 },
-            new Product() { Id = 5, Name = "Tarhana", CategoryId = 1, BrandId = 1 }
-        );
     }
 }

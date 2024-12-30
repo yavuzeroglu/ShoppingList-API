@@ -19,7 +19,6 @@ public class UpdateQuantityBasketItemCommandHandler : IRequestHandler<UpdateQuan
         var updateQuantityDTO = new UpdateQuantityDTO
         {
             Quantity = request.Quantity,
-            UnitPrice = request.UnitPrice
         };
 
         await _basketService.UpdateQuantityBasketItemAsync(request.BasketItemId, updateQuantityDTO);
