@@ -1,4 +1,6 @@
-# ShoppingList - Backend Service
+# 🚧 Under Development: ShoppingList - Backend Service
+
+# Shopping List - Backend Service
 
 
 ## 🔍 Project Overview
