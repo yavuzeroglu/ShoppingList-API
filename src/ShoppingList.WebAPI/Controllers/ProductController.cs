@@ -5,6 +5,7 @@ using ShoppingList.Application.Features.Images.Commands.DeleteImage;
 using ShoppingList.Application.Features.Images.Commands.UploadImage;
 using ShoppingList.Application.Features.Products.Commands.CreateProduct;
 using ShoppingList.Application.Features.Products.Commands.DeleteProduct;
+using ShoppingList.Application.Features.Products.Commands.PatchProduct;
 using ShoppingList.Application.Features.Products.Commands.UpdateProduct;
 using ShoppingList.Application.Features.Products.Queries.GetAllProducts;
 using ShoppingList.Application.Features.Products.Queries.GetByIdProduct;
@@ -36,7 +37,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateOneProductAsync(CreateProductCommandRequest request)
+    public async Task<IActionResult> CreateOneProductAsync([FromBody] CreateProductCommandRequest request)
     {
         await _mediator.Send(request);
         return StatusCode(StatusCodes.Status201Created);
@@ -45,6 +46,14 @@ public class ProductController : BaseApiController
     [HttpPut]
     public async Task<IActionResult> UpdateOneProductAsync([FromBody] UpdateProductCommandRequest request)
     {
+        await _mediator.Send(request);
+        return Ok();
+    }
+
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> PatchProductAsync(int id, [FromBody] PatchProductCommandRequest request)
+    {
+        request.Id = id; // Route'dan gelen ID'yi request'e atıyoruz
         await _mediator.Send(request);
         return Ok();
     }
