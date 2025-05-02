@@ -9,5 +9,5 @@ public class BasketViewModel
     public decimal TotalAmount { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime? UpdatedDate { get; set; }
-    public List<BasketItemViewModel> Items { get; set; } = new();
+    public List<BasketItemDTO> Items { get; set; } = new();
 }
