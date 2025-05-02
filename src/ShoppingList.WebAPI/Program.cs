@@ -85,7 +85,7 @@ builder.Services.AddSwaggerGen(s =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Put **_ONLY_** yourt JWT Bearer token on textbox below!"
+        Description = "Enter JWT Bearer Token. Example: 'Bearer <token>'"
     });
     s.AddSecurityRequirement(new OpenApiSecurityRequirement()
     {
@@ -114,15 +114,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseStaticFiles();
-app.UseSerilogRequestLogging();
-
-app.ConfigureExceptionHandlingMiddleware();
-
-app.UseHttpLogging();
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
+app.UseSerilogRequestLogging();
+app.ConfigureExceptionHandlingMiddleware();
+app.UseHttpLogging();
 
 app.Use(async (context, next) =>
 {
