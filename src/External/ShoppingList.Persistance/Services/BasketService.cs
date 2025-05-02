@@ -42,22 +42,21 @@ public class BasketService : IBasketService
     }
 
     // Commands
-    public async Task CreateBasketAsync(string BasketName)
+    public async Task<Basket> CreateBasketAsync(string basketName)
     {
-        AppUser? user = await IsUserExistsAsync();
+        var user = await GetCurrentUserAsync();
 
-        Basket basket = new()
+        var basket = new Basket
         {
-            CreatedByUserId = user.Id, 
-            Name = BasketName,
-            IsPurchased = false,
-            TotalAmount = 0,
+            CreatedByUserId = user.Id,
+            Name = basketName,
             CreatedDate = DateTime.UtcNow
         };
-        
+
         await _basketWriteRepository.AddAsync(basket);
         await _basketWriteRepository.SaveAsync();
 
+        return basket;
     }
 
     public async Task AddItemToBasketAsync(int basketId, int productId, int quantity)
@@ -65,7 +64,7 @@ public class BasketService : IBasketService
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
-            var user = await IsUserExistsAsync();
+            var user = await GetCurrentUserAsync();
             Basket basket = await _basketReadRepository
                 .GetSingleAsync(x => x.Id == basketId && x.CreatedByUserId == user.Id,
                                 x => x.Include(b => b.BasketItems).ThenInclude(bi => bi.Product))
@@ -138,28 +137,25 @@ public class BasketService : IBasketService
 
     public async Task RemoveBasketAsync(int basketId)
     {
-        Basket basket = await _basketReadRepository.GetByIdAsync(basketId)
-            ?? throw new NotFoundException("Basket Not Found");
+        var basket = await GetBasketByIdAsync(basketId);
 
         if (basket.BasketItems.Any())
-        {
             throw new InvalidOperationException("Cannot delete a basket that has items.");
-        }
 
         _basketWriteRepository.Remove(basket);
         await _basketWriteRepository.SaveAsync();
     }
 
-    public async Task DuplicateBasketAsync(int basketId, string newBasketName)
+    public async Task<Basket> DuplicateBasketAsync(int basketId, string newBasketName)
     {
         var sourceBasket = await GetBasketByIdAsync(basketId);
+        var user = await GetCurrentUserAsync();
 
-        Basket newBasket = new()
+        var newBasket = new Basket
         {
-            CreatedByUserId = sourceBasket.CreatedByUserId,
+            CreatedByUserId = user.Id,
             Name = newBasketName,
-            IsPurchased = false,
-            TotalAmount = 0,
+            // Description = sourceBasket.Description,
             CreatedDate = DateTime.UtcNow
         };
 
@@ -174,6 +170,8 @@ public class BasketService : IBasketService
                 item.Quantity
             );
         }
+
+        return newBasket;
     }
 
     public async Task SwitchPurchaseBasketItemAsync(int basketItemId)
@@ -187,10 +185,36 @@ public class BasketService : IBasketService
         await _basketItemWriteRepository.SaveAsync();
     }
 
-    // Queries
-    public async Task<List<Basket>> GetBasketsAsync()
+    public Task<BasketUser> CreateBasketUserAsync(int basketId, string userId)
     {
-        AppUser? user = await IsUserExistsAsync();
+        // TODO: !!
+        throw new NotImplementedException();
+    }
+
+    public async Task UpdateBasketAsync(int basketId, string newName)
+    {
+        var basket = await GetBasketByIdAsync(basketId);
+        
+        basket.Name = newName;
+        
+        _basketWriteRepository.Update(basket);
+        await _basketWriteRepository.SaveAsync();
+    }
+
+    public async Task UpdatePlannedPurchaseDateAsync(int basketId, DateTime? plannedPurchaseDate)
+    {
+        var basket = await GetBasketByIdAsync(basketId);
+        
+        // basket.PlannedPurchaseDate = plannedPurchaseDate;
+        
+        _basketWriteRepository.Update(basket);
+        await _basketWriteRepository.SaveAsync();
+    }
+
+    // Queries
+    public async Task<List<Basket>> GetUserBasketsAsync()
+    {
+        AppUser? user = await GetCurrentUserAsync();
 
         var baskets = await _basketReadRepository
             .GetWhere(x => x.CreatedByUserId.Equals(user.Id))
@@ -199,18 +223,12 @@ public class BasketService : IBasketService
                 Id = b.Id,
                 CreatedByUserId = b.CreatedByUserId,
                 Name = b.Name,
+                // Description = b.Description,
                 IsPurchased = b.IsPurchased,
                 TotalAmount = b.BasketItems.Sum(bi => bi.LineTotal),
-                BasketItems = b.BasketItems.Select(bi => new BasketItem
-                {
-                    Id = bi.Id,
-                    ProductId = bi.ProductId,
-                    Product = bi.Product,
-                    IsPurchased = bi.IsPurchased,
-                    IsDeleted = bi.IsDeleted,
-                    Quantity = bi.Quantity,
-                    LineTotal = bi.LineTotal
-                }).ToList()
+                // PlannedPurchaseDate = b.PlannedPurchaseDate,
+                PurchasedDate = b.PurchasedDate,
+                Note = b.Note
             })
             .ToListAsync();
 
@@ -219,15 +237,18 @@ public class BasketService : IBasketService
 
     public async Task<Basket> GetBasketByIdAsync(int basketId)
     {
-        AppUser? user = await IsUserExistsAsync();
-
-        Basket? basket = await _basketReadRepository
-            .GetWhere(x => x.CreatedByUserId.Equals(user.Id) && x.Id.Equals(basketId),
-                      x => x.Include(b => b.BasketItems)
-                            .ThenInclude(bi => bi.Product))
+        var user = await GetCurrentUserAsync();
+        
+        var basket = await _basketReadRepository
+            .GetWhere(x => x.Id == basketId && 
+                          (x.CreatedByUserId == user.Id || 
+                           x.BasketUsers.Any(bu => bu.AppUserId == user.Id)))
+            .Include(b => b.BasketItems)
+                .ThenInclude(bi => bi.Product)
             .FirstOrDefaultAsync();
+
         if (basket is null)
-            throw new NotFoundException("Basket not found");
+            throw new NotFoundException("Basket not found or access denied");
 
         return basket;
     }
@@ -254,26 +275,45 @@ public class BasketService : IBasketService
 
     public async Task<int> GetTotalBasketCountAsync()
     {
-        AppUser? user = await IsUserExistsAsync();
+        AppUser? user = await GetCurrentUserAsync();
 
         return await _basketReadRepository
             .GetWhere(x => x.CreatedByUserId.Equals(user.Id))
             .CountAsync();
     }
 
-
-    // Private Methods
-    private async Task<AppUser> IsUserExistsAsync()
+    public async Task<bool> IsBasketExistsAsync(int basketId)
     {
-        string? userName = _httpContextAccessor?
-            .HttpContext
-            .User
-            .FindFirstValue(ClaimTypes.Name);
+        return await _basketReadRepository.GetByIdAsync(basketId) != null;
+    }
 
-        AppUser? user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == userName)
-            ?? throw new UnauthorizedException();
+    public async Task<bool> HasUserAccessToBasket(int basketId)
+    {
+        var user = await GetCurrentUserAsync();
+        var basket = await _basketReadRepository
+            .GetWhere(x => x.Id == basketId)
+            .Include(b => b.BasketUsers)
+            .FirstOrDefaultAsync();
+
+        if (basket == null) return false;
+
+        return basket.CreatedByUserId == user.Id || 
+               basket.BasketUsers.Any(bu => bu.AppUserId == user.Id);
+    }
+
+    // Private Helper Methods
+    private async Task<AppUser> GetCurrentUserAsync()
+    {
+        string? userName = _httpContextAccessor?.HttpContext?.User.FindFirstValue(ClaimTypes.Name);
+
+        if (string.IsNullOrEmpty(userName))
+            throw new UnauthorizedException();
+
+        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == userName);
+        
+        if (user == null)
+            throw new UnauthorizedException();
 
         return user;
     }
-
 }
