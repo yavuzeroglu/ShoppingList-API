@@ -13,7 +13,7 @@ using ShoppingList.Application.Features.Categories.Queries.GetByIdCategory;
 
 namespace ShoppingList.WebAPI.Controllers;
 
-
+[Route("api/categories/[action]")]
 public class CategoryController : BaseApiController
 {
    private readonly ICategoryReadRepository _categoryReadRepository;
