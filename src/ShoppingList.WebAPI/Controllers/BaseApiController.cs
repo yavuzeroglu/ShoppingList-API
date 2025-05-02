@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ShoppingList.WebAPI.Controllers;
 
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]s/[action]")]
 public abstract class BaseApiController : ControllerBase
 {
    public readonly IMediator _mediator;
