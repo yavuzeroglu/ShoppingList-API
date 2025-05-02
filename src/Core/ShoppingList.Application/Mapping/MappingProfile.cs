@@ -40,7 +40,7 @@ public class MappingProfile : Profile
          .ForMember(dest => dest.Items,
             opt => opt.MapFrom(src => src.BasketItems))
          .ReverseMap();
-      CreateMap<BasketItem, BasketItemViewModel>()
+      CreateMap<BasketItem, BasketItemDTO>()
          .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
       .ReverseMap();
    }
