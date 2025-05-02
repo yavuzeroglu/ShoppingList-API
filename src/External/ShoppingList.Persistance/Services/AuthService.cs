@@ -1,7 +1,5 @@
-using System.Text;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.WebUtilities;
+using SendGrid.Helpers.Errors.Model;
 using ShoppingList.Application.Common.Abstractions.Services;
 using ShoppingList.Application.Common.Abstractions.Tokens;
 using ShoppingList.Application.DTOs;
@@ -40,7 +38,7 @@ public class AuthService : IAuthService
       if (checkPassword)
       {
          TokenDTO token = _tokenService.CreateAccessToken(accessTokenLifetime, user);
-         await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.Expiration, 1);
+         await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.Expiration, 60);
          return new()
          {
             AccessToken = token.AccessToken,
@@ -56,12 +54,12 @@ public class AuthService : IAuthService
       AppUser? user = _userManager.Users.FirstOrDefault(u => u.RefreshToken == refreshToken);
       if (user is not null && user?.RefreshTokenEndDate > DateTime.UtcNow)
       {
-         TokenDTO token = _tokenService.CreateAccessToken(2, user);
+         TokenDTO token = _tokenService.CreateAccessToken(15, user);
          await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.Expiration, 1);
          return token;
       }
       else
-         throw new Exception("Kullanici Bulunamadi");
+         throw new UnauthorizedAccessException("Kullanici Bulunamadi");
    }
 
 
@@ -76,7 +74,7 @@ public class AuthService : IAuthService
          await _mailService.SendPasswordMailAsync(email, user.Id, resetToken);
       }
       else
-         throw new Exception("Mail Kayıtlı Değil");
+         throw new NotFoundException("Mail Kayıtlı Değil");
    }
 
    public async Task<bool> VerifyResetTokenAsync(string resetToken, string userId)
