@@ -14,8 +14,10 @@ public class Basket : BaseEntity
 
   public string CreatedByUserId { get; set; } = string.Empty;
   public string Name { get; set; } = string.Empty;
+  // public string Description { get; set; } = string.Empty;
   public bool IsPurchased { get; set; } = false;
   public decimal TotalAmount { get; set; }
+  // public DateTime? PlannedPurchaseDate { get; set; }
   public DateTime PurchasedDate { get; set; }
   public string Note { get; set; } = string.Empty;
 
