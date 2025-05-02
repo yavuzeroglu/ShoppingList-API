@@ -30,6 +30,8 @@ public class GetAllProductQueryHandler : IRequestHandler<GetAllProductQueryReque
             BrandId = product.BrandId,
             CategoryId = product.CategoryId,
             IsActive = product.IsActive,
+            EstimatedPrice = product.EstimatedPrice,
+            Unit = product.Unit.ToString(),
             Images = images.Where(i => i.ProductId.Equals(product.Id)).Select(i => i.FileName).ToList(),
             CreatedDate = product.CreatedDate.ToString("dd-MM-yyyy")
          });
