@@ -6,16 +6,17 @@ namespace ShoppingList.Application.Features.Baskets.Commands.RemoveBasketItem;
 
 public class RemoveBasketItemCommandHandler : IRequestHandler<RemoveBasketItemCommandRequest, RemoveBasketItemCommandResponse>
 {
-    private readonly IBasketService _basketService;
+    private readonly IBasketItemService _basketItemService;
 
-    public RemoveBasketItemCommandHandler(IBasketService basketService)
+    public RemoveBasketItemCommandHandler(IBasketItemService basketItemService)
     {
-        _basketService = basketService;
+        _basketItemService = basketItemService;
     }
+
 
     public async Task<RemoveBasketItemCommandResponse> Handle(RemoveBasketItemCommandRequest request, CancellationToken cancellationToken)
     {
-        await _basketService.RemoveBasketItemAsync(request.BasketItemId);
+        await _basketItemService.RemoveBasketItemAsync(request.BasketItemId);
 
         return new RemoveBasketItemCommandResponse()
         {
