@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ShoppingList.Application.Common.Abstractions.Repositories.BasketItems;
 using ShoppingList.Application.Common.Abstractions.Repositories.Baskets;
+using ShoppingList.Application.Common.Abstractions.Repositories.BasketUsers;
 using ShoppingList.Application.Common.Abstractions.Repositories.Brands;
 using ShoppingList.Application.Common.Abstractions.Repositories.Categories;
 using ShoppingList.Application.Common.Abstractions.Repositories.ProductImage;
@@ -13,9 +14,10 @@ using ShoppingList.Domain.Entities.Identity;
 using ShoppingList.Persistance.Context;
 using ShoppingList.Persistance.Repositories.BasketLines;
 using ShoppingList.Persistance.Repositories.Baskets;
+using ShoppingList.Persistance.Repositories.BasketUsers;
 using ShoppingList.Persistance.Repositories.Brands;
 using ShoppingList.Persistance.Repositories.Categories;
-using ShoppingList.Persistance.Repositories.ProductImage;   
+using ShoppingList.Persistance.Repositories.ProductImage;
 using ShoppingList.Persistance.Repositories.Products;
 using ShoppingList.Persistance.Services;
 
@@ -61,6 +63,9 @@ public static class ServiceRegistration
 
       services.AddScoped<IBasketItemWriteRepository, BasketItemWriteRepository>();
       services.AddScoped<IBasketItemReadRepository, BasketItemReadRepository>();
+
+      services.AddScoped<IBasketUserReadRepository, BasketUserReadRepository>();
+      services.AddScoped<IBasketUserWriteRepository, BasketUserWriteRepository>();
    }
 
    public static void ConfigureServiceManager(this IServiceCollection services)
@@ -68,5 +73,7 @@ public static class ServiceRegistration
       services.AddScoped<IUserService, UserService>();
       services.AddScoped<IAuthService, AuthService>();
       services.AddScoped<IBasketService, BasketService>();
+      services.AddScoped<IBasketItemService, BasketItemService>();
+      services.AddScoped<IBasketUserService, BasketUserService>();
    }
 }

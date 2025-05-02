@@ -11,7 +11,6 @@ using ShoppingList.Infrastructure.Services.Token;
 using ShoppingList.Infrastructure.Services.Storages;
 using ShoppingList.Application.Common.Abstractions.Storage;
 using ShoppingList.Infrastructure.Enums;
-using System.Security.Cryptography;
 
 namespace ShoppingList.Infrastructure;
 
