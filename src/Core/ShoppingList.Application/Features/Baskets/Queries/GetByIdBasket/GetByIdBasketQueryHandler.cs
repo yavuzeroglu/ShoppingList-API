@@ -26,7 +26,7 @@ public class GetByIdBasketQueryHandler : IRequestHandler<GetByIdBasketQueryReque
             TotalAmount = basket.TotalAmount,
             CreatedDate = basket.CreatedDate,
             UpdatedDate = basket.ModifiedDate,
-            Items = basket.BasketItems.Select(x => new BasketItemViewModel()
+            Items = basket.BasketItems.Select(x => new BasketItemDTO()
             {
                 Id = x.Id,
                 ProductName = x.Product.Name,

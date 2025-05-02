@@ -9,7 +9,7 @@ public class GetAllBasketQueryResponse
     public string BasketName { get; set; } = string.Empty;
     public bool IsPurchased { get; set; } = false;
     public decimal TotalAmount { get; set; }
-    public List<BasketItemViewModel> Items { get; set; } = [];
+    public List<BasketItemDTO> Items { get; set; } = [];
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedDate { get; set; }
 }

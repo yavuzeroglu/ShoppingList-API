@@ -2,44 +2,56 @@ using MediatR;
 using ShoppingList.Application.Common.Abstractions.Services;
 using ShoppingList.Application.DTOs.Baskets;
 
-
 namespace ShoppingList.Application.Features.Baskets.Queries.GetAllBasket;
 
 public class GetAllBasketQueryHandler : IRequestHandler<GetAllBasketQueryRequest, IList<GetAllBasketQueryResponse>>
 {
     private readonly IBasketService _basketService;
-    public GetAllBasketQueryHandler(IBasketService basketService)
+    private readonly IBasketItemService _basketItemService;
+
+    public GetAllBasketQueryHandler(
+        IBasketService basketService,
+        IBasketItemService basketItemService)
     {
         _basketService = basketService;
-
+        _basketItemService = basketItemService;
     }
 
     public async Task<IList<GetAllBasketQueryResponse>> Handle(GetAllBasketQueryRequest request, CancellationToken cancellationToken)
     {
-        var baskets = await _basketService.GetBasketsAsync();
+        var baskets = await _basketService.GetUserBasketsAsync();
+        var response = new List<GetAllBasketQueryResponse>();
 
-        List<GetAllBasketQueryResponse> response = new();
-        foreach (var item in baskets)
+        foreach (var basket in baskets)
         {
-            response.Add(new GetAllBasketQueryResponse()
+            var basketItems = await _basketItemService.GetBasketItemsAsync(basket.Id);
+
+            response.Add(new GetAllBasketQueryResponse
             {
-                Id = item.Id,
-                CreatedByUserId = item.CreatedByUserId,
-                BasketName = item.Name,
-                IsPurchased = item.IsPurchased,
-                TotalAmount = item.TotalAmount,
-                CreatedDate = item.CreatedDate,
-                UpdatedDate = item.ModifiedDate,
-                Items = item.BasketItems.Select(x => new BasketItemViewModel()
+                Id = basket.Id,
+                CreatedByUserId = basket.CreatedByUserId,
+                BasketName = basket.Name,
+                IsPurchased = basket.IsPurchased,
+                TotalAmount = await _basketItemService.GetBasketTotalAsync(basket.Id),
+                CreatedDate = basket.CreatedDate,
+                UpdatedDate = basket.ModifiedDate,
+                Items = basketItems.Select(x => new BasketItemDTO
                 {
                     Id = x.Id,
-                    ProductName = x.Product.Name,
+                    AssignedUserId = x.AssignedUserId,
+                    BasketId = x.ProductId,
+                    AssignedUserName = x.AssignedUserName,
+                    ProductId = x.ProductId,
+                    CreatedDate = x.CreatedDate,
+                    ModifiedDate = x.ModifiedDate,
+                    ProductName = x.ProductName,
                     Quantity = x.Quantity,
                     LineTotal = x.LineTotal,
                     IsPurchased = x.IsPurchased
                 }).ToList()
             });
         }
+
         return response;
     }
 }
