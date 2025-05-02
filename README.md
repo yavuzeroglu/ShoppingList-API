@@ -29,6 +29,35 @@ ShoppingList is a collaborative shopping list management system that allows user
 - **Containerization**: Docker
 - **Version Control**: Git
 
+## 📁 Project Structure
+
+```
+ShoppingList/
+├── src/
+│   ├── Core/                           # Core business logic and domain models
+│   │   ├── ShoppingList.Domain/        # Domain entities, value objects, and business rules
+│   │   └── ShoppingList.Application/   # Application services, DTOs, and interfaces
+│   │
+│   ├── External/                       # External dependencies and infrastructure
+│   │   ├── ShoppingList.Persistance/   # Database operations and repositories
+│   │   └── ShoppingList.Infrastructure/# External services (email, logging, etc.)
+│   │
+│   └── ShoppingList.WebAPI/            # API layer and presentation
+│       ├── Controllers/                # API endpoints
+│       ├── Models/                     # API request/response models
+│       ├── Extensions/                 # Extension methods
+│       ├── Configurations/            # Application configurations
+│       ├── Properties/                # Project properties
+│       ├── wwwroot/                   # Static files
+│       ├── Program.cs                 # Application entry point
+│       └── appsettings.json           # Configuration file
+│
+├── .github/                           # GitHub configurations
+├── .vs/                              # Visual Studio configurations
+├── README.md                         # Project documentation
+└── ShoppingList.sln                  # Solution file
+```
+
 ## 📋 Project Status
 
 ### Completed Features
