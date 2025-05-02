@@ -5,11 +5,12 @@ namespace ShoppingList.Application.Features.Baskets.Commands.RemoveBasket;
 
 public class RemoveBasketCommandValidator : AbstractValidator<RemoveBasketCommandRequest>
 {
-    private readonly IBasketService _basketService;
+    private readonly IBasketItemService _basketItemService;
 
-    public RemoveBasketCommandValidator(IBasketService basketService)
+    public RemoveBasketCommandValidator(IBasketItemService basketItemService)
     {
-        _basketService = basketService;
+        
+        _basketItemService = basketItemService;
 
         RuleFor(x => x.BasketId)
             .NotEmpty()
@@ -18,7 +19,7 @@ public class RemoveBasketCommandValidator : AbstractValidator<RemoveBasketComman
             .WithMessage("Geçersiz sepet ID'si.")
             .MustAsync(async (id, cancellation) =>
             {
-                return await _basketService.IsBasketEmptyAsync(id);
+                return await _basketItemService.IsBasketItemExistsAsync(id);
             })
             .WithMessage("İçinde ürün bulunan sepet silinemez.");
     }

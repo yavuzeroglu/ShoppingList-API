@@ -8,22 +8,20 @@ namespace ShoppingList.Application.Features.Baskets.Commands.UpdateQuantityBaske
 public class UpdateQuantityBasketItemCommandHandler : IRequestHandler<UpdateQuantityBasketItemCommandRequest, UpdateQuantityBasketItemCommandResponse>
 {
     private readonly IBasketService _basketService;
+    private readonly IBasketItemService _basketItemService;
 
-    public UpdateQuantityBasketItemCommandHandler(IBasketService basketService)
+    public UpdateQuantityBasketItemCommandHandler(IBasketService basketService, IBasketItemService basketItemService)
     {
         _basketService = basketService;
+        _basketItemService = basketItemService;
+
     }
 
     public async Task<UpdateQuantityBasketItemCommandResponse> Handle(UpdateQuantityBasketItemCommandRequest request, CancellationToken cancellationToken)
     {
-        var updateQuantityDTO = new UpdateQuantityDTO
-        {
-            Quantity = request.Quantity,
-        };
+        await _basketItemService.UpdateQuantityAsync(request.BasketItemId, request.Quantity);
 
-        await _basketService.UpdateQuantityBasketItemAsync(request.BasketItemId, updateQuantityDTO);
-
-        BasketItem basketItem = await _basketService.GetBasketItemByIdAsync(request.BasketItemId);
+        BasketItem basketItem = await _basketItemService.GetBasketItemByIdAsync(request.BasketItemId);
         Basket basket = await _basketService.GetBasketByIdAsync(basketItem.BasketId);
 
         return new UpdateQuantityBasketItemCommandResponse()

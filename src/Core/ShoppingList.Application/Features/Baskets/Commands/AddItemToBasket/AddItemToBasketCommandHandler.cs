@@ -6,17 +6,17 @@ namespace ShoppingList.Application.Features.Baskets.Commands.ADdItemToBasket;
 
 public class AddItemToBasketCommandHandler : IRequestHandler<AddItemToBasketCommandRequest, AddItemToBasketCommandResponse>
 {
-    private readonly IBasketService _basketService;
+    private readonly IBasketItemService _basketItemService;
 
-    public AddItemToBasketCommandHandler(IBasketService basketService)
+    public AddItemToBasketCommandHandler(IBasketItemService basketItemService)
     {
-        _basketService = basketService;
-
+        _basketItemService = basketItemService;
     }
+
 
     public async Task<AddItemToBasketCommandResponse> Handle(AddItemToBasketCommandRequest request, CancellationToken cancellationToken)
     {
-        await _basketService.AddItemToBasketAsync(
+        await _basketItemService.AddItemToBasketAsync(
             request.BasketId,
             request.ProductId,
             request.Quantity);
